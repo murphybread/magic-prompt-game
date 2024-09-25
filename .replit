@@ -15,6 +15,10 @@ author = "agent"
 task = "workflow.run"
 args = "Start Backend and Frontend"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start Backend"
+
 [[workflows.workflow]]
 name = "Start Backend and Frontend"
 author = "agent"
@@ -27,9 +31,25 @@ task = "shell.exec"
 args = "npm run start"
 waitForPort = 8000
 
+[[workflows.workflow]]
+name = "Start Backend"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node backend/src/app.js"
+waitForPort = 8008
+
 [deployment]
 run = ["sh", "-c", "npm run start"]
 
 [[ports]]
 localPort = 8000
 externalPort = 80
+
+[[ports]]
+localPort = 8008
+externalPort = 8008
