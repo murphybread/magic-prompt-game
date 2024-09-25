@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { login, register, guestLogin } from '../services/authService';
+import APITester from './APITester';
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
@@ -52,6 +53,7 @@ const Login = ({ onLogin }) => {
         {isRegistering ? 'Switch to Login' : 'Switch to Register'}
       </button>
       <button onClick={handleGuestLogin}>Guest Login</button>
+      <APITester />
     </div>
   );
 };
