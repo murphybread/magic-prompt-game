@@ -1,0 +1,26 @@
+{
+  "name": "magicmanagame",
+  "version": "1.0.0",
+  "description": "This is a simple magic game web application using Express.js and React, with basic authentication and mana cost calculation.",
+  "main": "index.js",
+  "scripts": {
+    "start:backend": "node backend/src/app.js",
+    "start:frontend": "cd frontend && npm start",
+    "install:frontend": "cd frontend && npm install",
+    "build:frontend": "cd frontend && npm run build",
+    "start": "npm run start:backend & npm run start:frontend",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "express": "^4.17.1",
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^8.5.1",
+    "bcryptjs": "^2.4.3",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  }
+}
