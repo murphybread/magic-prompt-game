@@ -12,13 +12,17 @@ const Login = ({ onLogin }) => {
     try {
       let token;
       if (isRegistering) {
+        console.log('Attempting to register user:', username);
         token = await register(username, password);
       } else {
+        console.log('Attempting to log in user:', username);
         token = await login(username, password);
       }
+      console.log('Authentication successful, token received');
       onLogin(token);
     } catch (error) {
-      alert(error.message);
+      console.error('Authentication error:', error.message);
+      alert(error.response ? error.response.data.message : error.message);
     }
   };
 
