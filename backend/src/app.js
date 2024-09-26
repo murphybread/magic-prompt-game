@@ -1,20 +1,19 @@
-const express = require("express");
-const cors = require("cors");
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
 const { Pool } = require('pg');
-const dotenv = require('dotenv');
-const authRoutes = require("./routes/authRoutes");
-const gameRoutes = require("./routes/gameRoutes");
-
-dotenv.config();
+const authRoutes = require('./routes/authRoutes');
+const gameRoutes = require('./routes/gameRoutes');
 
 const app = express();
 
-// Database connection
+console.log('Environment variables:', process.env);
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false
-  }
+    rejectUnauthorized: false,
+  },
 });
 
 const corsOptions = {
@@ -40,6 +39,30 @@ app.use((req, res, next) => {
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to the Magic Game API!" });
+});
+
+app.get("/api/db-test", async (req, res) => {
+  try {
+    const connectionResult = await req.db.query("SELECT NOW()");
+    const tablesResult = await req.db.query(`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public'
+    `);
+
+    const tables = tablesResult.rows.map((row) => row.table_name);
+
+    res.json({
+      message: "Database connected successfully",
+      timestamp: connectionResult.rows[0].now,
+      tables: tables,
+    });
+  } catch (error) {
+    console.error("Database connection error:", error);
+    res
+      .status(500)
+      .json({ message: "Error connecting to database", error: error.message });
+  }
 });
 
 app.use("/api/auth", authRoutes);

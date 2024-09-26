@@ -48,7 +48,7 @@ agentRequireRestartOnSave = false
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node backend/src/app.js"
+args = "NODE_ENV=development node backend/src/app.js"
 waitForPort = 8008
 
 [[workflows.workflow]]
