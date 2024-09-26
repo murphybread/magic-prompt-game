@@ -5,8 +5,13 @@ const gameRoutes = require("./routes/gameRoutes");
 
 const app = express();
 
-// Enable CORS for all routes
-app.use(cors());
+// Updated CORS configuration
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  credentials: true,
+};
+app.use(cors(corsOptions));
+
 app.use(express.json());
 
 app.get("/", (req, res) => {
