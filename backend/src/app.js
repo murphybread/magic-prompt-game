@@ -6,10 +6,17 @@ const gameRoutes = require("./routes/gameRoutes");
 const app = express();
 
 const corsOptions = {
-  origin: ['https://8db49593-86bc-4024-9db9-f98d410662af-00-19a9705pix41f.picard.replit.dev', 'http://localhost:3000'],
-  credentials: true,
+  origin: [
+    "https://8db49593-86bc-4024-9db9-f98d410662af-00-19a9705pix41f.picard.replit.dev",
+    "http://localhost:3000",
+    "https://8db49593-86bc-4024-9db9-f98d410662af-00-19a9705pix41f.picard.replit.dev:3000",
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true, // This is necessary for cookie-based authentication or any requests with credentials
+  allowedHeaders: ["Content-Type", "Authorization"], // Allow the required headers
 };
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); // Handle preflight requests
 
 app.use(express.json());
 
