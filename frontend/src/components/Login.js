@@ -54,10 +54,10 @@ const Login = ({ onLogin }) => {
         />
         <button type="submit">{isRegistering ? 'Register' : 'Login'}</button>
       </form>
-      <button onClick={() => setIsRegistering(!isRegistering)}>
+      <button onClick={() => setIsRegistering(!isRegistering)} className="switch-button">
         {isRegistering ? 'Switch to Login' : 'Switch to Register'}
       </button>
-      <button onClick={handleGuestLogin}>Guest Login</button>
+      <button onClick={handleGuestLogin} className="guest-button">Guest Login</button>
       <APITester />
     </div>
   );

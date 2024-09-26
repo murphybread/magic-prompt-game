@@ -3,16 +3,17 @@
   margin: 0 auto;
   padding: 20px;
   border-radius: 5px;
+  border: 4px solid; /* Increased from 2px to 4px */
 }
 
 .login {
   background-color: #e6f7ff;
-  border: 2px solid #1890ff;
+  border-color: #1890ff;
 }
 
 .register {
   background-color: #f6ffed;
-  border: 2px solid #52c41a;
+  border-color: #52c41a;
 }
 
 .login-form {
@@ -38,15 +39,28 @@
   background-color: #40a9ff;
 }
 
-button {
+.switch-button {
   margin-top: 10px;
   padding: 5px;
-  background-color: #52c41a;
+  background-color: #ff9800;
   color: white;
-  border: none;
+  border: 2px solid #f57c00;
   cursor: pointer;
 }
 
-button:hover {
-  background-color: #73d13d;
+.switch-button:hover {
+  background-color: #ffa726;
+}
+
+.guest-button {
+  margin-top: 10px;
+  padding: 5px;
+  background-color: #9c27b0;
+  color: white;
+  border: 2px solid #7b1fa2;
+  cursor: pointer;
+}
+
+.guest-button:hover {
+  background-color: #ab47bc;
 }
