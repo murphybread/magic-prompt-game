@@ -6,10 +6,14 @@ const gameRoutes = require("./routes/gameRoutes");
 const app = express();
 
 const corsOptions = {
-  origin: [
-    'https://8db49593-86bc-4024-9db9-f98d410662af-00-19a9705pix41f.picard.replit.dev',
-    'http://localhost:3000'
-  ],
+  origin: function (origin, callback) {
+    console.log('Request origin:', origin);
+    if (!origin || ['https://8db49593-86bc-4024-9db9-f98d410662af-00-19a9705pix41f.picard.replit.dev', 'http://localhost:3000'].indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 };
 app.use(cors(corsOptions));

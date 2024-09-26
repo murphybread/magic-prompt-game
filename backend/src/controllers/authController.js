@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 const users = [];
 
 exports.register = async (req, res) => {
+  console.log('Registration attempt:', req.body);
   try {
     const { username, password } = req.body;
 
@@ -25,8 +26,10 @@ exports.register = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "1h" },
     );
+    console.log('User registered successfully:', newUser.username);
     res.status(201).json({ token });
   } catch (error) {
+    console.error('Error during registration:', error);
     res.status(500).json({ message: "Error registering user" });
   }
 };
