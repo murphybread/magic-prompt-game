@@ -1,24 +1,40 @@
-const express = require('express');
-const cors = require('cors');
-const authRoutes = require('./routes/authRoutes');
-const gameRoutes = require('./routes/gameRoutes');
+const express = require("express");
+const cors = require("cors");
+const authRoutes = require("./routes/authRoutes");
+const gameRoutes = require("./routes/gameRoutes");
 
 const app = express();
 
+// Enable CORS for all routes
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to the Magic Game API!' });
+app.get("/", (req, res) => {
+  res.json({ message: "Welcome to the Magic Game API!" });
 });
 
-app.use('/api/auth', authRoutes);
-app.use('/api/game', gameRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/game", gameRoutes);
 
 const PORT = process.env.PORT || 8008;
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
+const server = app.listen(PORT, "0.0.0.0", () => {
+  const actualPort = server.address().port;
+  console.log(`Server running on port ${actualPort}`);
+  console.log(`Environment PORT: ${process.env.PORT}`);
+  console.log(`Actual PORT used: ${actualPort}`);
+}).on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.log(`Port ${PORT} is busy, trying the next available port.`);
+    server.listen(0, "0.0.0.0", () => {
+      const newPort = server.address().port;
+      console.log(`Server is now running on port ${newPort}`);
+      console.log(`Environment PORT: ${process.env.PORT}`);
+      console.log(`Actual PORT used: ${newPort}`);
+    });
+  } else {
+    console.error('Failed to start server:', err);
+  }
 });
 
 module.exports = app;

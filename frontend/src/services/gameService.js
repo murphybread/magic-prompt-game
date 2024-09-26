@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8008/api/game';
+const API_URL = process.env.REACT_APP_API_URL;
 
 const authAxios = axios.create({
   baseURL: API_URL,
@@ -10,11 +10,11 @@ const authAxios = axios.create({
 });
 
 export const calculateManaCost = async (spellLevel, modifiers) => {
-  const response = await authAxios.post('/calculate-mana-cost', { spellLevel, modifiers });
+  const response = await authAxios.post('/game/calculate-mana-cost', { spellLevel, modifiers });
   return response.data;
 };
 
 export const castSpell = async (spellName, manaCost) => {
-  const response = await authAxios.post('/cast-spell', { spellName, manaCost });
+  const response = await authAxios.post('/game/cast-spell', { spellName, manaCost });
   return response.data;
 };
