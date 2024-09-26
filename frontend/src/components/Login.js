@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { login, register, guestLogin } from '../services/authService';
 import APITester from './APITester';
+import './Login.css';
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
@@ -36,9 +37,9 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div>
+    <div className={`login-container ${isRegistering ? 'register' : 'login'}`}>
       <h2>{isRegistering ? 'Register' : 'Login'}</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="login-form">
         <input
           type="text"
           placeholder="Username"

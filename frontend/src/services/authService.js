@@ -9,8 +9,8 @@ const axiosInstance = axios.create({
 
 export const register = async (username, password) => {
   console.log('Attempting to register user:', username);
-  console.log('API_URL:', process.env.REACT_APP_API_URL);
-  const fullUrl = `${process.env.REACT_APP_API_URL}/auth/register`;
+  console.log('API_URL:', API_URL);
+  const fullUrl = `${API_URL}/auth/register`;
   console.log('Full registration URL:', fullUrl);
   try {
     const response = await axiosInstance.post('/auth/register', { username, password });
