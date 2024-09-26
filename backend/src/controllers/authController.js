@@ -1,15 +1,15 @@
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 exports.register = async (req, res) => {
   console.log('Registration attempt:', req.body);
-  const { username, password } = req.body;
+  const { username, email, password } = req.body;
 
   try {
     // Check if user already exists
-    const userCheck = await req.db.query('SELECT * FROM users WHERE username = $1', [username]);
+    const userCheck = await req.db.query('SELECT * FROM users WHERE username = $1 OR email = $2', [username, email]);
     if (userCheck.rows.length > 0) {
-      return res.status(400).json({ message: "Username already exists" });
+      return res.status(400).json({ message: "Username or email already exists" });
     }
 
     // Hash the password
@@ -17,15 +17,15 @@ exports.register = async (req, res) => {
 
     // Insert new user
     const result = await req.db.query(
-      'INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id',
-      [username, hashedPassword]
+      'INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id',
+      [username, email, hashedPassword]
     );
 
     const userId = result.rows[0].id;
 
     // Generate JWT
     const token = jwt.sign(
-      { id: userId, username },
+      { id: userId, username, email },
       process.env.JWT_SECRET,
       { expiresIn: "1h" },
     );
