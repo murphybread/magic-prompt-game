@@ -1,9 +1,21 @@
 const express = require("express");
 const cors = require("cors");
+const { Pool } = require('pg');
+const dotenv = require('dotenv');
 const authRoutes = require("./routes/authRoutes");
 const gameRoutes = require("./routes/gameRoutes");
 
+dotenv.config();
+
 const app = express();
+
+// Database connection
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
 
 const corsOptions = {
   origin: [
@@ -12,13 +24,19 @@ const corsOptions = {
     "https://8db49593-86bc-4024-9db9-f98d410662af-00-19a9705pix41f.picard.replit.dev:3000",
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  credentials: true, // This is necessary for cookie-based authentication or any requests with credentials
-  allowedHeaders: ["Content-Type", "Authorization"], // Allow the required headers
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"],
 };
 app.use(cors(corsOptions));
-app.options("*", cors(corsOptions)); // Handle preflight requests
+app.options("*", cors(corsOptions));
 
 app.use(express.json());
+
+// Pass the database pool to the routes
+app.use((req, res, next) => {
+  req.db = pool;
+  next();
+});
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to the Magic Game API!" });

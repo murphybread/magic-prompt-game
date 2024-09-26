@@ -1,32 +1,36 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
-// In-memory user storage (replace with database in production)
-const users = [];
-
 exports.register = async (req, res) => {
   console.log('Registration attempt:', req.body);
-  try {
-    const { username, password } = req.body;
+  const { username, password } = req.body;
 
-    if (users.find((u) => u.username === username)) {
+  try {
+    // Check if user already exists
+    const userCheck = await req.db.query('SELECT * FROM users WHERE username = $1', [username]);
+    if (userCheck.rows.length > 0) {
       return res.status(400).json({ message: "Username already exists" });
     }
 
+    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = {
-      id: users.length + 1,
-      username,
-      password: hashedPassword,
-    };
-    users.push(newUser);
 
+    // Insert new user
+    const result = await req.db.query(
+      'INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id',
+      [username, hashedPassword]
+    );
+
+    const userId = result.rows[0].id;
+
+    // Generate JWT
     const token = jwt.sign(
-      { id: newUser.id, username },
+      { id: userId, username },
       process.env.JWT_SECRET,
       { expiresIn: "1h" },
     );
-    console.log('User registered successfully:', newUser.username);
+
+    console.log('User registered successfully:', username);
     res.status(201).json({ token });
   } catch (error) {
     console.error('Error during registration:', error);
@@ -37,7 +41,10 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { username, password } = req.body;
-    const user = users.find((u) => u.username === username);
+    
+    // Find user
+    const result = await req.db.query('SELECT * FROM users WHERE username = $1', [username]);
+    const user = result.rows[0];
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({ message: "Invalid credentials" });
@@ -48,6 +55,7 @@ exports.login = async (req, res) => {
     });
     res.json({ token });
   } catch (error) {
+    console.error('Error during login:', error);
     res.status(500).json({ message: "Error logging in" });
   }
 };
@@ -60,11 +68,12 @@ exports.guestLogin = (req, res) => {
   res.json({ token });
 };
 
-exports.getUserList = (req, res) => {
-  // Remove sensitive information like passwords before sending
-  const userList = users.map((user) => ({
-    id: user.id,
-    username: user.username,
-  }));
-  res.json(userList);
+exports.getUserList = async (req, res) => {
+  try {
+    const result = await req.db.query('SELECT id, username FROM users');
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching user list:', error);
+    res.status(500).json({ message: "Error fetching user list" });
+  }
 };
