@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = process.env.REACT_APP_API_URL || 'https://8db49593-86bc-4024-9db9-f98d410662af-00-19a9705pix41f.picard.replit.dev/api';
+
+console.log('API_URL in authService:', API_URL);
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
@@ -9,9 +11,7 @@ const axiosInstance = axios.create({
 
 export const register = async (username, password) => {
   console.log('Attempting to register user:', username);
-  console.log('API_URL:', API_URL);
-  const fullUrl = `${API_URL}/auth/register`;
-  console.log('Full registration URL:', fullUrl);
+  console.log('Full registration URL:', `${API_URL}/auth/register`);
   try {
     const response = await axiosInstance.post('/auth/register', { username, password });
     console.log('Registration response:', response.data);
@@ -31,8 +31,11 @@ export const register = async (username, password) => {
 };
 
 export const login = async (username, password) => {
+  console.log('Attempting to log in user:', username);
+  console.log('Full login URL:', `${API_URL}/auth/login`);
   try {
     const response = await axiosInstance.post('/auth/login', { username, password });
+    console.log('Login response:', response.data);
     return response.data.token;
   } catch (error) {
     console.error('Login error:', error);
@@ -41,8 +44,11 @@ export const login = async (username, password) => {
 };
 
 export const guestLogin = async () => {
+  console.log('Attempting guest login');
+  console.log('Full guest login URL:', `${API_URL}/auth/guest`);
   try {
     const response = await axiosInstance.post('/auth/guest');
+    console.log('Guest login response:', response.data);
     return response.data.token;
   } catch (error) {
     console.error('Guest login error:', error);
