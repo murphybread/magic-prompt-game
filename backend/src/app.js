@@ -7,6 +7,7 @@ const gameRoutes = require('./routes/gameRoutes');
 const app = express();
 
 console.log('Environment variables:', process.env);
+console.log('JWT_SECRET is set:', !!process.env.REPLIT_JWT_SECRET);
 
 const pool = new Pool({
   connectionString: process.env.REPLIT_DATABASE_URL,

@@ -9,7 +9,8 @@ module.exports = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.REPLIT_JWT_SECRET);
+    console.log('JWT_SECRET used:', process.env.JWT_SECRET ? 'Environment variable' : 'Fallback key');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'SomeKey');
     console.log('Token verified successfully');
     req.user = decoded;
     next();
