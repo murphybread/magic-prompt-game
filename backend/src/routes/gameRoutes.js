@@ -7,5 +7,6 @@ router.use(authMiddleware);
 
 router.post('/calculate-mana-cost', gameController.calculateManaCost);
 router.post('/cast-spell', gameController.castSpell);
+router.get('/user-mana', gameController.getUserMana);
 
 module.exports = router;

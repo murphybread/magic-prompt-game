@@ -18,3 +18,8 @@ export const castSpell = async (spellName, manaCost) => {
   const response = await authAxios.post('/game/cast-spell', { spellName, manaCost });
   return response.data;
 };
+
+export const getUserMana = async () => {
+  const response = await authAxios.get('/game/user-mana');
+  return response.data;
+};
