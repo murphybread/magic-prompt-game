@@ -58,3 +58,12 @@ export const guestLogin = async () => {
     throw error;
   }
 };
+
+export const deleteUser = async (username) => {
+  try {
+    await axiosInstance.delete('/auth/delete', { data: { username } });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    throw error;
+  }
+};

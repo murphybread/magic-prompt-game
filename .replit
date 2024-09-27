@@ -65,7 +65,7 @@ agentRequireRestartOnSave = false
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd frontend && npm start"
-waitForPort = 3000
+waitForPort = 3001
 
 [[workflows.workflow]]
 name = "Create Users Table"
