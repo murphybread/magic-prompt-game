@@ -5,9 +5,22 @@ const API_URL = window._env_ ? window._env_.REACT_APP_API_URL : 'https://8db4959
 const authAxios = axios.create({
   baseURL: API_URL,
   headers: {
-    Authorization: `Bearer ${localStorage.getItem('token')}`,
+    'Content-Type': 'application/json',
   },
 });
+
+authAxios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export const calculateManaCost = async (spellLevel, modifiers) => {
   const response = await authAxios.post('/game/calculate-mana-cost', { spellLevel, modifiers });
