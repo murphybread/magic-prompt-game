@@ -67,7 +67,9 @@ app.get("/api/db-test", async (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/game", gameRoutes);
 
-const PORT = process.env.REPLIT_PORT || 8008;
+const PORT = process.env.REPLIT_PORT || process.env.PORT || 8008;
+
+console.log('Attempting to start server on port:', PORT);
 
 const server = app
   .listen(PORT, "0.0.0.0", () => {
@@ -77,6 +79,7 @@ const server = app
     console.log(`Actual PORT used: ${actualPort}`);
   })
   .on("error", (err) => {
+    console.error("Error starting server:", err);
     if (err.code === "EADDRINUSE") {
       console.log(`Port ${PORT} is busy, trying the next available port.`);
       server.listen(0, "0.0.0.0", () => {
