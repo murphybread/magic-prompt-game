@@ -1,4 +1,3 @@
-require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
@@ -10,7 +9,7 @@ const app = express();
 console.log('Environment variables:', process.env);
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: process.env.REPLIT_DATABASE_URL,
   ssl: {
     rejectUnauthorized: false,
   },
@@ -68,13 +67,13 @@ app.get("/api/db-test", async (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/game", gameRoutes);
 
-const PORT = process.env.PORT || 8008;
+const PORT = process.env.REPLIT_PORT || 8008;
 
 const server = app
   .listen(PORT, "0.0.0.0", () => {
     const actualPort = server.address().port;
     console.log(`Server running on port ${actualPort}`);
-    console.log(`Environment PORT: ${process.env.PORT}`);
+    console.log(`Environment PORT: ${process.env.REPLIT_PORT}`);
     console.log(`Actual PORT used: ${actualPort}`);
   })
   .on("error", (err) => {
@@ -83,7 +82,7 @@ const server = app
       server.listen(0, "0.0.0.0", () => {
         const newPort = server.address().port;
         console.log(`Server is now running on port ${newPort}`);
-        console.log(`Environment PORT: ${process.env.PORT}`);
+        console.log(`Environment PORT: ${process.env.REPLIT_PORT}`);
         console.log(`Actual PORT used: ${newPort}`);
       });
     } else {
