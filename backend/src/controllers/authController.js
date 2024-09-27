@@ -31,7 +31,7 @@ exports.register = async (req, res) => {
     // Generate JWT
     const token = jwt.sign(
       { id: userId, username, email },
-      process.env.REPLIT_JWT_SECRET,
+      process.env.JWT_SECRET,
       { expiresIn: "1h" },
     );
 
@@ -63,7 +63,7 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ id: user.id, username }, process.env.REPLIT_JWT_SECRET, {
+    const token = jwt.sign({ id: user.id, username }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
     res.json({ token });
@@ -75,7 +75,7 @@ exports.login = async (req, res) => {
 
 exports.guestLogin = (req, res) => {
   const guestUser = { id: 0, username: "guest" };
-  const token = jwt.sign(guestUser, process.env.REPLIT_JWT_SECRET, {
+  const token = jwt.sign(guestUser, process.env.JWT_SECRET, {
     expiresIn: "1h",
   });
   res.json({ token });
