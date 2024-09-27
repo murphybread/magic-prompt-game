@@ -27,6 +27,10 @@ args = "Start Frontend"
 task = "workflow.run"
 args = "Create Users Table"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Add Mana Column"
+
 [[workflows.workflow]]
 name = "Start Backend and Frontend"
 author = "agent"
@@ -73,6 +77,17 @@ agentRequireRestartOnSave = false
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "psql $DATABASE_URL -f backend/src/db/create_user_table.sql"
+
+[[workflows.workflow]]
+name = "Add Mana Column"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "psql $DATABASE_URL -f backend/src/db/add_mana_column.sql"
 
 [deployment]
 run = ["sh", "-c", "npm start"]

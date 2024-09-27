@@ -17,8 +17,8 @@ exports.register = async (req, res) => {
 
     // Insert new user
     const result = await req.db.query(
-      'INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id',
-      [username, email, hashedPassword]
+      'INSERT INTO users (username, email, password, mana) VALUES ($1, $2, $3, $4) RETURNING id',
+      [username, email, hashedPassword, 100]
     );
 
     const userId = result.rows[0].id;
