@@ -77,3 +77,27 @@ exports.getUserList = async (req, res) => {
     res.status(500).json({ message: "Error fetching user list" });
   }
 };
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const { username } = req.body;
+    const userId = req.user.id; // Assuming we have middleware that adds user info to req
+
+    // Check if the username matches the logged-in user
+    if (req.user.username !== username) {
+      return res.status(403).json({ message: "You can only delete your own account" });
+    }
+
+    // Delete the user from the database
+    const result = await req.db.query('DELETE FROM users WHERE id = $1', [userId]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({ message: "Error deleting user" });
+  }
+};
