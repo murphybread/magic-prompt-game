@@ -1,15 +1,20 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 exports.register = async (req, res) => {
-  console.log('Registration attempt:', req.body);
+  console.log("Registration attempt:", req.body);
   const { username, email, password } = req.body;
 
   try {
     // Check if user already exists
-    const userCheck = await req.db.query('SELECT * FROM users WHERE username = $1 OR email = $2', [username, email]);
+    const userCheck = await req.db.query(
+      "SELECT * FROM users WHERE username = $1 OR email = $2",
+      [username, email],
+    );
     if (userCheck.rows.length > 0) {
-      return res.status(400).json({ message: "Username or email already exists" });
+      return res
+        .status(400)
+        .json({ message: "Username or email already exists" });
     }
 
     // Hash the password
@@ -17,8 +22,8 @@ exports.register = async (req, res) => {
 
     // Insert new user
     const result = await req.db.query(
-      'INSERT INTO users (username, email, password, mana) VALUES ($1, $2, $3, $4) RETURNING id',
-      [username, email, hashedPassword, 100]
+      "INSERT INTO users (username, email, password, mana) VALUES ($1, $2, $3, $4) RETURNING id",
+      [username, email, hashedPassword, 100],
     );
 
     const userId = result.rows[0].id;
@@ -30,10 +35,10 @@ exports.register = async (req, res) => {
       { expiresIn: "1h" },
     );
 
-    console.log('User registered successfully:', username);
+    console.log("User registered successfully:", username);
     res.status(201).json({ token });
   } catch (error) {
-    console.error('Error during registration:', error);
+    console.error("Error during registration:", error);
     res.status(500).json({ message: "Error registering user" });
   }
 };
@@ -41,10 +46,18 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { username, password } = req.body;
-    
+
     // Find user
-    const result = await req.db.query('SELECT * FROM users WHERE username = $1', [username]);
+    const result = await req.db.query(
+      "SELECT * FROM users WHERE username = $1",
+      [username],
+    );
     const user = result.rows[0];
+
+    // If no user found, return 404
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({ message: "Invalid credentials" });
@@ -55,7 +68,7 @@ exports.login = async (req, res) => {
     });
     res.json({ token });
   } catch (error) {
-    console.error('Error during login:', error);
+    console.error("Error during login:", error);
     res.status(500).json({ message: "Error logging in" });
   }
 };
@@ -70,10 +83,10 @@ exports.guestLogin = (req, res) => {
 
 exports.getUserList = async (req, res) => {
   try {
-    const result = await req.db.query('SELECT id, username FROM users');
+    const result = await req.db.query("SELECT id, username FROM users");
     res.json(result.rows);
   } catch (error) {
-    console.error('Error fetching user list:', error);
+    console.error("Error fetching user list:", error);
     res.status(500).json({ message: "Error fetching user list" });
   }
 };
@@ -85,11 +98,15 @@ exports.deleteUser = async (req, res) => {
 
     // Check if the username matches the logged-in user
     if (req.user.username !== username) {
-      return res.status(403).json({ message: "You can only delete your own account" });
+      return res
+        .status(403)
+        .json({ message: "You can only delete your own account" });
     }
 
     // Delete the user from the database
-    const result = await req.db.query('DELETE FROM users WHERE id = $1', [userId]);
+    const result = await req.db.query("DELETE FROM users WHERE id = $1", [
+      userId,
+    ]);
 
     if (result.rowCount === 0) {
       return res.status(404).json({ message: "User not found" });
@@ -97,7 +114,7 @@ exports.deleteUser = async (req, res) => {
 
     res.json({ message: "User deleted successfully" });
   } catch (error) {
-    console.error('Error deleting user:', error);
+    console.error("Error deleting user:", error);
     res.status(500).json({ message: "Error deleting user" });
   }
 };
