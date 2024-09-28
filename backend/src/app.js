@@ -16,6 +16,9 @@ console.log('TWITTER_CONSUMER_KEY is set:', !!process.env.TWITTER_CONSUMER_KEY);
 console.log('TWITTER_CONSUMER_SECRET is set:', !!process.env.TWITTER_CONSUMER_SECRET);
 console.log('SESSION_SECRET is set:', !!process.env.SESSION_SECRET);
 console.log('FRONTEND_URL is set:', !!process.env.FRONTEND_URL);
+console.log('BACKEND_URL is set:', !!process.env.BACKEND_URL);
+
+console.log('Twitter callback URL:', `${process.env.BACKEND_URL}/api/auth/twitter/callback`);
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
