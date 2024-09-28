@@ -15,7 +15,8 @@ const Game = () => {
 
   useEffect(() => {
     fetchUserMana();
-    setLoggedInUsername(localStorage.getItem('username'));
+    const storedUsername = localStorage.getItem('username');
+    setLoggedInUsername(storedUsername || 'Guest');
   }, []);
 
   const fetchUserMana = async () => {
@@ -85,7 +86,10 @@ const Game = () => {
   return (
     <div>
       <div className="top-left-button">
-        <button onClick={() => setShowDeleteConfirmation(true)} className="delete-id-button">Delete ID</button>
+        <button onClick={() => setShowDeleteConfirmation(true)} className="delete-id-button">
+          Delete ID
+        </button>
+        <span className="username-display">Username: {loggedInUsername}</span>
       </div>
       <h2>Magic Game</h2>
       <p>Your Mana: {userMana !== null ? userMana : 'Loading...'}</p>

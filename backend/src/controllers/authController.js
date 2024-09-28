@@ -118,3 +118,15 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ message: "Error deleting user" });
   }
 };
+
+exports.socialLoginCallback = (req, res) => {
+  // This function will be called after successful social authentication
+  const token = jwt.sign(
+    { id: req.user.id, username: req.user.username },
+    process.env.JWT_SECRET,
+    { expiresIn: '1h' }
+  );
+
+  // Redirect to the frontend with the token
+  res.redirect(`${process.env.FRONTEND_URL}?token=${token}`);
+};

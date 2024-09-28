@@ -40,6 +40,7 @@ export const login = async (username, password) => {
     const response = await axiosInstance.post('/auth/login', { username, password });
     console.log('Login response:', response.data);
     localStorage.setItem('token', response.data.token);
+    localStorage.setItem('username', username);  // Add this line
     return response.data.token;
   } catch (error) {
     console.error('Login error:', error);

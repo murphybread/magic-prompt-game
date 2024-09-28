@@ -3,6 +3,8 @@ const cors = require('cors');
 const { Pool } = require('pg');
 const authRoutes = require('./routes/authRoutes');
 const gameRoutes = require('./routes/gameRoutes');
+const passport = require('./config/passport');
+const session = require('express-session');
 
 const app = express();
 
@@ -30,6 +32,15 @@ app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 
 app.use(express.json());
+
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your_session_secret',
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Pass the database pool to the routes
 app.use((req, res, next) => {

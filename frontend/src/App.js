@@ -5,13 +5,15 @@ import Game from './components/Game';
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
 
-  const handleLogin = (newToken) => {
+  const handleLogin = (newToken, username) => {
     localStorage.setItem('token', newToken);
+    localStorage.setItem('username', username);
     setToken(newToken);
   };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('username');
     setToken(null);
   };
 

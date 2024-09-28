@@ -2,6 +2,8 @@
   position: absolute;
   top: 10px;
   left: 10px;
+  display: flex;
+  align-items: center;
 }
 
 .delete-id-button {
@@ -17,4 +19,10 @@
 
 .delete-id-button:hover {
   background-color: #ff1a1a;
+}
+
+.username-display {
+  margin-left: 30px;
+  color: #333;
+  font-weight: bold;
 }
