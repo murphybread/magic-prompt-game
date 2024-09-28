@@ -49,6 +49,10 @@ passport.use(new GoogleStrategy({
   }
 ));
 
+console.log('Twitter API Key:', process.env.TWITTER_API_KEY ? 'Set' : 'Not set');
+console.log('Twitter API Key Secret:', process.env.TWITTER_API_KEY_SECRET ? 'Set' : 'Not set');
+console.log('Backend URL:', process.env.BACKEND_URL);
+
 passport.use(new TwitterStrategy({
     consumerKey: process.env.TWITTER_API_KEY,
     consumerSecret: process.env.TWITTER_API_KEY_SECRET,
