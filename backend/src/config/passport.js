@@ -49,13 +49,13 @@ passport.use(new GoogleStrategy({
   }
 ));
 
-console.log('Twitter API Key:', process.env.TWITTER_API_KEY ? 'Set' : 'Not set');
-console.log('Twitter API Key Secret:', process.env.TWITTER_API_KEY_SECRET ? 'Set' : 'Not set');
+console.log('Twitter Consumer Key:', process.env.TWITTER_CONSUMER_KEY ? 'Set' : 'Not set');
+console.log('Twitter Consumer Secret:', process.env.TWITTER_CONSUMER_SECRET ? 'Set' : 'Not set');
 console.log('Backend URL:', process.env.BACKEND_URL);
 
 passport.use(new TwitterStrategy({
-    consumerKey: process.env.TWITTER_API_KEY,
-    consumerSecret: process.env.TWITTER_API_KEY_SECRET,
+    consumerKey: process.env.TWITTER_CONSUMER_KEY,
+    consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
     callbackURL: `${process.env.BACKEND_URL}/api/auth/twitter/callback`
   },
   async (token, tokenSecret, profile, done) => {
