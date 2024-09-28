@@ -1,24 +1,30 @@
-const express = require('express');
-const cors = require('cors');
-const { Pool } = require('pg');
-const authRoutes = require('./routes/authRoutes');
-const gameRoutes = require('./routes/gameRoutes');
-const passport = require('./config/passport');
-const session = require('express-session');
+const express = require("express");
+const cors = require("cors");
+const { Pool } = require("pg");
+const authRoutes = require("./routes/authRoutes");
+const gameRoutes = require("./routes/gameRoutes");
+const passport = require("./config/passport");
+const session = require("express-session");
 
 const app = express();
 
-console.log('Environment variables check:');
-console.log('JWT_SECRET is set:', !!process.env.JWT_SECRET);
-console.log('GOOGLE_CLIENT_ID is set:', !!process.env.GOOGLE_CLIENT_ID);
-console.log('GOOGLE_CLIENT_SECRET is set:', !!process.env.GOOGLE_CLIENT_SECRET);
-console.log('TWITTER_CONSUMER_KEY is set:', !!process.env.TWITTER_CONSUMER_KEY);
-console.log('TWITTER_CONSUMER_SECRET is set:', !!process.env.TWITTER_CONSUMER_SECRET);
-console.log('SESSION_SECRET is set:', !!process.env.SESSION_SECRET);
-console.log('FRONTEND_URL is set:', !!process.env.FRONTEND_URL);
-console.log('BACKEND_URL is set:', !!process.env.BACKEND_URL);
+console.log("Environment variables check:");
+console.log("JWT_SECRET is set:", !!process.env.JWT_SECRET);
+console.log("GOOGLE_CLIENT_ID is set:", !!process.env.GOOGLE_CLIENT_ID);
+console.log("GOOGLE_CLIENT_SECRET is set:", !!process.env.GOOGLE_CLIENT_SECRET);
+console.log("TWITTER_CONSUMER_KEY is set:", !!process.env.TWITTER_CONSUMER_KEY);
+console.log(
+  "TWITTER_CONSUMER_SECRET is set:",
+  !!process.env.TWITTER_CONSUMER_SECRET,
+);
+console.log("SESSION_SECRET is set:", !!process.env.SESSION_SECRET);
+console.log("FRONTEND_URL is set:", !!process.env.FRONTEND_URL);
+console.log("BACKEND_URL is set:", !!process.env.BACKEND_URL);
 
-console.log('Twitter callback URL:', `${process.env.BACKEND_URL}/api/auth/twitter/callback`);
+console.log(
+  "Twitter callback URL:",
+  `${process.env.BACKEND_URL}/api/auth/twitter/callback`,
+);
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -29,8 +35,10 @@ const pool = new Pool({
 
 const corsOptions = {
   origin: [
-    process.env.FRONTEND_URL,
     "http://localhost:3000",
+    "https://8db49593-86bc-4024-9db9-f98d410662af-00-19a9705pix41f.picard.replit.dev",
+    "https://8db49593-86bc-4024-9db9-f98d410662af-00-19a9705pix41f.picard.replit.dev:8008",
+    "https://8db49593-86bc-4024-9db9-f98d410662af-00-19a9705pix41f.picard.replit.dev:3000",
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true,
@@ -41,11 +49,13 @@ app.options("*", cors(corsOptions));
 
 app.use(express.json());
 
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'your_session_secret',
-  resave: false,
-  saveUninitialized: false
-}));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "your_session_secret",
+    resave: false,
+    saveUninitialized: false,
+  }),
+);
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -65,7 +75,7 @@ app.use("/api/game", gameRoutes);
 
 const PORT = process.env.PORT || 8008;
 
-console.log('Attempting to start server on port:', PORT);
+console.log("Attempting to start server on port:", PORT);
 
 const server = app
   .listen(PORT, "0.0.0.0", () => {

@@ -12,7 +12,7 @@
     "@craco/craco": "^7.0.0"
   },
   "scripts": {
-    "start": "PORT=3001 CHOKIDAR_USEPOLLING=true react-scripts --max-old-space-size=4096 start",
+    "start": "CHOKIDAR_USEPOLLING=true react-scripts --max-old-space-size=4096 start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
