@@ -2,6 +2,15 @@
 
 This is a simple magic game web application using Express.js and React, with basic authentication, social login, and mana cost calculation.
 
+1.0.0: 백엔드(Express)와 프론트엔드(React)간의 연동. 백엔드의 API 기능을 프론트엔드의 버튼을 클릭하였을 때 동작 가능 여부로 확인 (Key Word CORS )
+
+1.1.0: DB와의 연동. 기존 In-memory에 저장하던 유저정보를 Postgresql 외부 DB에 저장. NEON 플랫폼을 사용하여 유저 생성, 삭제등으로 DB변하는 것과, 유저 목록시 해당 DB를 참조하는 점으로 연결여부 확인 (Postgresql pool)
+
+1.1.1: 소셜 트위터, 구글 로그인. 일단 로그인 버튼 구현하기 위한 환경변수들 발급 후 설정.
+   - 현재 둘다 동작에 문제가 있으며 트위터 먼저 구현중, 트위터의 경우 인증까지 됐지만 이후 다시 홈페이지 돌아왔을때 문제 생김
+   - 원하는 기능
+      -  처음 소셜 로그인 시 인증 후 유저가 DB에 없다면 Create User 기능 수행 후 로그인
+      -  이후 소셜 로그인 시 DB에 유저가 있다면 해당 정보로 로그인
 ## Setup
 
 ### Backend
