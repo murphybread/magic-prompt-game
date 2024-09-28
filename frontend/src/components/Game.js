@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { calculateManaCost, castSpell, getUserMana } from '../services/gameService';
 import { deleteUser } from '../services/authService';
+import './Game.css';
 
 const Game = () => {
   const [spellLevel, setSpellLevel] = useState(1);
@@ -83,6 +84,9 @@ const Game = () => {
 
   return (
     <div>
+      <div className="top-left-button">
+        <button onClick={() => setShowDeleteConfirmation(true)} className="delete-id-button">Delete ID</button>
+      </div>
       <h2>Magic Game</h2>
       <p>Your Mana: {userMana !== null ? userMana : 'Loading...'}</p>
       <div>
@@ -106,28 +110,25 @@ const Game = () => {
         </div>
       )}
       {castResult && <p>{castResult}</p>}
-      <div>
-        <button onClick={() => setShowDeleteConfirmation(true)}>Delete ID</button>
-        {showDeleteConfirmation && (
-          <div className="delete-confirmation">
-            <h3>Are you sure you want to delete your account?</h3>
-            <p>This action cannot be undone. Please enter your username to confirm:</p>
-            <input
-              type="text"
-              value={deleteUsername}
-              onChange={(e) => setDeleteUsername(e.target.value)}
-              placeholder="Enter your username"
-            />
-            <button 
-              onClick={handleDeleteUser}
-              disabled={deleteUsername !== loggedInUsername}
-            >
-              Confirm Delete
-            </button>
-            <button onClick={() => setShowDeleteConfirmation(false)}>Cancel</button>
-          </div>
-        )}
-      </div>
+      {showDeleteConfirmation && (
+        <div className="delete-confirmation">
+          <h3>Are you sure you want to delete your account?</h3>
+          <p>This action cannot be undone. Please enter your username to confirm:</p>
+          <input
+            type="text"
+            value={deleteUsername}
+            onChange={(e) => setDeleteUsername(e.target.value)}
+            placeholder="Enter your username"
+          />
+          <button 
+            onClick={handleDeleteUser}
+            disabled={deleteUsername !== loggedInUsername}
+          >
+            Confirm Delete
+          </button>
+          <button onClick={() => setShowDeleteConfirmation(false)}>Cancel</button>
+        </div>
+      )}
     </div>
   );
 };
