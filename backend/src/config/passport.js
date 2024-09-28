@@ -50,8 +50,8 @@ passport.use(new GoogleStrategy({
 ));
 
 passport.use(new TwitterStrategy({
-    consumerKey: process.env.TWITTER_CONSUMER_KEY,
-    consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+    consumerKey: process.env.TWITTER_API_KEY,
+    consumerSecret: process.env.TWITTER_API_KEY_SECRET,
     callbackURL: `${process.env.BACKEND_URL}/api/auth/twitter/callback`
   },
   async (token, tokenSecret, profile, done) => {

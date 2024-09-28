@@ -18,10 +18,14 @@ router.get('/google/callback',
 );
 
 // Twitter OAuth routes
-router.get('/twitter', passport.authenticate('twitter'));
-router.get('/twitter/callback',
-  passport.authenticate('twitter', { failureRedirect: '/login' }),
-  authController.socialLoginCallback
-);
+router.get('/twitter', (req, res, next) => {
+  console.log('Starting Twitter authentication');
+  passport.authenticate('twitter')(req, res, next);
+});
+
+router.get('/twitter/callback', (req, res, next) => {
+  console.log('Twitter callback received');
+  passport.authenticate('twitter', { failureRedirect: '/login' })(req, res, next);
+}, authController.socialLoginCallback);
 
 module.exports = router;
