@@ -60,15 +60,17 @@ passport.use(new TwitterStrategy({
   },
   async (token, tokenSecret, profile, done) => {
     try {
-      const result = await pool.query('SELECT * FROM users WHERE twitter_id = $1', [profile.id]);
-      let user = result.rows[0];
-
-      if (!user) {
+      let user = await pool.query('SELECT * FROM users WHERE twitter_id = $1', [profile.id]);
+      
+      if (user.rows.length === 0) {
+        // Create a new user if they don't exist
         const newUser = await pool.query(
           'INSERT INTO users (username, twitter_id, mana) VALUES ($1, $2, $3) RETURNING *',
           [profile.username, profile.id, 100]
         );
         user = newUser.rows[0];
+      } else {
+        user = user.rows[0];
       }
 
       done(null, user);

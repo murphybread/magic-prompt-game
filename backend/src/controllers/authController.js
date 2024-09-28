@@ -120,13 +120,11 @@ exports.deleteUser = async (req, res) => {
 };
 
 exports.socialLoginCallback = (req, res) => {
-  // This function will be called after successful social authentication
   const token = jwt.sign(
     { id: req.user.id, username: req.user.username },
     process.env.JWT_SECRET,
     { expiresIn: '1h' }
   );
 
-  // Redirect to the frontend with the token
-  res.redirect(`${process.env.FRONTEND_URL}?token=${token}`);
+  res.redirect(`${process.env.FRONTEND_URL}?token=${token}&username=${req.user.username}`);
 };
