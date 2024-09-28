@@ -8,11 +8,17 @@ const session = require('express-session');
 
 const app = express();
 
-console.log('Environment variables:', process.env);
-console.log('JWT_SECRET is set:', !!process.env.REPLIT_JWT_SECRET);
+console.log('Environment variables check:');
+console.log('JWT_SECRET is set:', !!process.env.JWT_SECRET);
+console.log('GOOGLE_CLIENT_ID is set:', !!process.env.GOOGLE_CLIENT_ID);
+console.log('GOOGLE_CLIENT_SECRET is set:', !!process.env.GOOGLE_CLIENT_SECRET);
+console.log('TWITTER_CONSUMER_KEY is set:', !!process.env.TWITTER_CONSUMER_KEY);
+console.log('TWITTER_CONSUMER_SECRET is set:', !!process.env.TWITTER_CONSUMER_SECRET);
+console.log('SESSION_SECRET is set:', !!process.env.SESSION_SECRET);
+console.log('FRONTEND_URL is set:', !!process.env.FRONTEND_URL);
 
 const pool = new Pool({
-  connectionString: process.env.REPLIT_DATABASE_URL,
+  connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false,
   },
@@ -20,9 +26,8 @@ const pool = new Pool({
 
 const corsOptions = {
   origin: [
-    "https://8db49593-86bc-4024-9db9-f98d410662af-00-19a9705pix41f.picard.replit.dev",
+    process.env.FRONTEND_URL,
     "http://localhost:3000",
-    "https://8db49593-86bc-4024-9db9-f98d410662af-00-19a9705pix41f.picard.replit.dev:3000",
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true,
@@ -52,57 +57,19 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to the Magic Game API!" });
 });
 
-app.get("/api/db-test", async (req, res) => {
-  try {
-    const connectionResult = await req.db.query("SELECT NOW()");
-    const tablesResult = await req.db.query(`
-      SELECT table_name 
-      FROM information_schema.tables 
-      WHERE table_schema = 'public'
-    `);
-
-    const tables = tablesResult.rows.map((row) => row.table_name);
-
-    res.json({
-      message: "Database connected successfully",
-      timestamp: connectionResult.rows[0].now,
-      tables: tables,
-    });
-  } catch (error) {
-    console.error("Database connection error:", error);
-    res
-      .status(500)
-      .json({ message: "Error connecting to database", error: error.message });
-  }
-});
-
 app.use("/api/auth", authRoutes);
 app.use("/api/game", gameRoutes);
 
-const PORT = process.env.REPLIT_PORT || process.env.PORT || 8008;
+const PORT = process.env.PORT || 8008;
 
 console.log('Attempting to start server on port:', PORT);
 
 const server = app
   .listen(PORT, "0.0.0.0", () => {
-    const actualPort = server.address().port;
-    console.log(`Server running on port ${actualPort}`);
-    console.log(`Environment PORT: ${process.env.REPLIT_PORT}`);
-    console.log(`Actual PORT used: ${actualPort}`);
+    console.log(`Server running on port ${PORT}`);
   })
   .on("error", (err) => {
     console.error("Error starting server:", err);
-    if (err.code === "EADDRINUSE") {
-      console.log(`Port ${PORT} is busy, trying the next available port.`);
-      server.listen(0, "0.0.0.0", () => {
-        const newPort = server.address().port;
-        console.log(`Server is now running on port ${newPort}`);
-        console.log(`Environment PORT: ${process.env.REPLIT_PORT}`);
-        console.log(`Actual PORT used: ${newPort}`);
-      });
-    } else {
-      console.error("Failed to start server:", err);
-    }
   });
 
 module.exports = app;
