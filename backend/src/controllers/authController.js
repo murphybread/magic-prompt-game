@@ -6,7 +6,6 @@ exports.register = async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
-    // Check if user already exists
     const userCheck = await req.db.query(
       "SELECT * FROM users WHERE username = $1 OR email = $2",
       [username, email],
@@ -17,10 +16,8 @@ exports.register = async (req, res) => {
         .json({ message: "Username or email already exists" });
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insert new user
     const result = await req.db.query(
       "INSERT INTO users (username, email, password, mana) VALUES ($1, $2, $3, $4) RETURNING id",
       [username, email, hashedPassword, 100],
@@ -28,7 +25,6 @@ exports.register = async (req, res) => {
 
     const userId = result.rows[0].id;
 
-    // Generate JWT
     const token = jwt.sign(
       { id: userId, username, email },
       process.env.JWT_SECRET,
@@ -47,14 +43,12 @@ exports.login = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    // Find user
     const result = await req.db.query(
       "SELECT * FROM users WHERE username = $1",
       [username],
     );
     const user = result.rows[0];
 
-    // If no user found, return 404
     if (result.rows.length === 0) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -73,12 +67,29 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.guestLogin = (req, res) => {
-  const guestUser = { id: 0, username: "guest" };
-  const token = jwt.sign(guestUser, process.env.JWT_SECRET, {
-    expiresIn: "1h",
-  });
-  res.json({ token });
+exports.guestLogin = async (req, res) => {
+  try {
+    const guestUsername = `Guest_${Math.random().toString(36).substring(7)}`;
+    const initialMana = 10;
+
+    const result = await req.db.query(
+      'INSERT INTO users (username, password, mana) VALUES ($1, $2, $3) RETURNING id, username',
+      [guestUsername, 'guest', initialMana]
+    );
+
+    const guestUser = result.rows[0];
+
+    const token = jwt.sign(
+      { id: guestUser.id, username: guestUser.username },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    res.json({ token, username: guestUser.username });
+  } catch (error) {
+    console.error('Error creating guest user:', error);
+    res.status(500).json({ message: 'Error creating guest user' });
+  }
 };
 
 exports.getUserList = async (req, res) => {
@@ -94,16 +105,14 @@ exports.getUserList = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const { username } = req.body;
-    const userId = req.user.id; // Assuming we have middleware that adds user info to req
+    const userId = req.user.id;
 
-    // Check if the username matches the logged-in user
     if (req.user.username !== username) {
       return res
         .status(403)
         .json({ message: "You can only delete your own account" });
     }
 
-    // Delete the user from the database
     const result = await req.db.query("DELETE FROM users WHERE id = $1", [
       userId,
     ]);
@@ -119,12 +128,24 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-exports.socialLoginCallback = (req, res) => {
-  const token = jwt.sign(
-    { id: req.user.id, username: req.user.username },
-    process.env.JWT_SECRET,
-    { expiresIn: '1h' }
-  );
+exports.socialLoginCallback = async (req, res) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res.redirect(`${process.env.FRONTEND_URL}/login?error=Authentication failed`);
+    }
 
-  res.redirect(`${process.env.FRONTEND_URL}?token=${token}&username=${req.user.username}`);
+    const token = jwt.sign(
+      { id: user.id, username: user.username },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    res.redirect(`${process.env.FRONTEND_URL}/login?token=${token}&username=${user.username}`);
+  } catch (error) {
+    console.error("Error in social login callback:", error);
+    res.redirect(`${process.env.FRONTEND_URL}/login?error=Authentication failed`);
+  }
 };
+
+module.exports = exports;

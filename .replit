@@ -13,26 +13,19 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Start Backend and Frontend"
+args = "Start Backend"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
 args = "Start Backend"
 
+
 [[workflows.workflow.tasks]]
 task = "workflow.run"
 args = "Start Frontend"
 
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Create Users Table"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Add Mana Column"
-
 [[workflows.workflow]]
-name = "Start Backend and Frontend"
+name = "Start Backend"
 author = "agent"
 
 [workflows.workflow.metadata]
@@ -40,8 +33,8 @@ agentRequireRestartOnSave = false
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm start"
-waitForPort = 3000
+args = "cd backend && npm start"
+waitForPort = 8008
 
 [[workflows.workflow]]
 name = "Start Backend"
@@ -56,6 +49,22 @@ args = "NODE_ENV=development node backend/src/app.js"
 waitForPort = 8008
 
 [[workflows.workflow]]
+name = "Create Users Table"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+
+[[workflows.workflow]]
+name = "Add Mana Column"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+
+[[workflows.workflow]]
 name = "Start Frontend"
 author = "agent"
 
@@ -65,29 +74,7 @@ agentRequireRestartOnSave = false
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd frontend && npm start"
-waitForPort = 3001
-
-[[workflows.workflow]]
-name = "Create Users Table"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "psql $DATABASE_URL -f backend/src/db/create_user_table.sql"
-
-[[workflows.workflow]]
-name = "Add Mana Column"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "psql $DATABASE_URL -f backend/src/db/add_mana_column.sql"
+waitForPort = 3000
 
 [deployment]
 run = ["sh", "-c", "npm start"]
@@ -97,21 +84,5 @@ localPort = 3000
 externalPort = 3000
 
 [[ports]]
-localPort = 3001
-externalPort = 3003
-
-[[ports]]
-localPort = 8000
-externalPort = 80
-
-[[ports]]
 localPort = 8008
 externalPort = 8008
-
-[[ports]]
-localPort = 8009
-externalPort = 3001
-
-[[ports]]
-localPort = 37907
-externalPort = 3002

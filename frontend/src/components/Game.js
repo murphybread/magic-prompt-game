@@ -15,8 +15,6 @@ const Game = () => {
 
   useEffect(() => {
     fetchUserMana();
-    const storedUsername = localStorage.getItem('username');
-    setLoggedInUsername(storedUsername || 'Guest');
   }, []);
 
   const fetchUserMana = async () => {
@@ -27,6 +25,7 @@ const Game = () => {
       const result = await getUserMana();
       console.log('User mana result:', result);
       setUserMana(result.mana);
+      setLoggedInUsername(result.username);
     } catch (error) {
       console.error('Error fetching user mana:', error);
       if (error.response && error.response.status === 401) {
@@ -41,7 +40,6 @@ const Game = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('username');
     window.location.href = '/';
   };
 

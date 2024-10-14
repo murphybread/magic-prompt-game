@@ -4,8 +4,9 @@
   "description": "This is a simple magic game web application using Express.js and React, with basic authentication and mana cost calculation.",
   "main": "index.js",
   "scripts": {
-    "start:backend": "node backend/src/app.js",
-    "start:frontend": "cd frontend && npm start",
+    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "start:backend": "cd backend && npm install && node src/app.js",
+    "start:frontend": "cd frontend && npm install && npm start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -15,10 +16,11 @@
     "@craco/craco": "^7.1.0",
     "axios": "^1.7.7",
     "bcryptjs": "^2.4.3",
+    "concurrently": "^6.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
-    "express-session": "^1.18.0",
+    "express-session": "^1.18.1",
     "jsonwebtoken": "^9.0.2",
     "nodemon": "^3.1.7",
     "passport": "^0.7.0",
@@ -27,6 +29,8 @@
     "pg": "^8.13.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^5.0.1",
+    "react-social-login-buttons": "^4.1.0",
+    "uuid": "^10.0.0"
   }
 }

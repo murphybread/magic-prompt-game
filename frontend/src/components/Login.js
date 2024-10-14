@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { login, register, guestLogin } from '../services/authService';
+import { GoogleLoginButton, TwitterLoginButton } from 'react-social-login-buttons';
 import APITester from './APITester';
 import './Login.css';
 
@@ -12,8 +13,9 @@ const Login = ({ onLogin }) => {
     // Check for token in URL params (for social login callback)
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
-    if (token) {
-      onLogin(token, 'Social User');
+    const username = urlParams.get('username');
+    if (token && username) {
+      onLogin(token, username);
       // Clear the URL params
       window.history.replaceState({}, document.title, window.location.pathname);
     }
@@ -40,8 +42,8 @@ const Login = ({ onLogin }) => {
 
   const handleGuestLogin = async () => {
     try {
-      const token = await guestLogin();
-      onLogin(token, 'Guest');
+      const { token, username } = await guestLogin();
+      onLogin(token, username);
     } catch (error) {
       alert(error.message);
     }
@@ -73,12 +75,8 @@ const Login = ({ onLogin }) => {
         {isRegistering ? 'Switch to Login' : 'Switch to Register'}
       </button>
       <button onClick={handleGuestLogin} className="guest-button">Guest Login</button>
-      <button onClick={() => handleSocialLogin('google')} className="social-button google-button">
-        Login with Google
-      </button>
-      <button onClick={() => handleSocialLogin('twitter')} className="social-button twitter-button">
-        Login with Twitter
-      </button>
+      <GoogleLoginButton onClick={() => handleSocialLogin('google')} />
+      <TwitterLoginButton onClick={() => handleSocialLogin('twitter')} />
       <APITester />
     </div>
   );

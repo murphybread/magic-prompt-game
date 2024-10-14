@@ -2,7 +2,7 @@
 
 This is a simple magic game web application using Express.js and React, with basic authentication, social login, and mana cost calculation.
 
-1.0.0: 백엔드(Express)와 프론트엔드(React)간의 연동. 백엔드의 API 기능을 프론트엔드의 버튼을 클릭하였을 때 동작 가능 여부로 확인 (Key Word CORS )
+1.0.0: 백엔드(Express)와 프론트엔드(React)간의 연동. 백엔드의 API 기능을 프론트엔드의 버튼을 클릭하였을 때 동작 가능 여부 확인 (Key Word CORS )
 
 1.1.0: DB와의 연동. 기존 In-memory에 저장하던 유저정보를 Postgresql 외부 DB에 저장. NEON 플랫폼을 사용하여 유저 생성, 삭제등으로 DB변하는 것과, 유저 목록시 해당 DB를 참조하는 점으로 연결여부 확인 (Postgresql pool)
 
