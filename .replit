@@ -17,11 +17,6 @@ args = "Start Backend"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Start Backend"
-
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
 args = "Start Frontend"
 
 [[workflows.workflow]]
@@ -33,36 +28,8 @@ agentRequireRestartOnSave = false
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd backend && npm start"
+args = "cd backend && npm run start"
 waitForPort = 8008
-
-[[workflows.workflow]]
-name = "Start Backend"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "NODE_ENV=development node backend/src/app.js"
-waitForPort = 8008
-
-[[workflows.workflow]]
-name = "Create Users Table"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-
-[[workflows.workflow]]
-name = "Add Mana Column"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
 
 [[workflows.workflow]]
 name = "Start Frontend"
@@ -73,15 +40,16 @@ agentRequireRestartOnSave = false
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd frontend && npm start"
+args = "cd frontend && npm run start"
 waitForPort = 3000
-
-[deployment]
-run = ["sh", "-c", "npm start"]
 
 [[ports]]
 localPort = 3000
 externalPort = 3000
+
+[[ports]]
+localPort = 3001
+externalPort = 80
 
 [[ports]]
 localPort = 8008

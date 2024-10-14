@@ -21,7 +21,7 @@ const Game = () => {
     try {
       console.log('Fetching user mana...');
       const token = localStorage.getItem('token');
-      console.log('Token from localStorage:', token);
+      console.log('Token from localStorage:', token ? 'Token present' : 'No token');
       const result = await getUserMana();
       console.log('User mana result:', result);
       setUserMana(result.mana);
@@ -73,11 +73,16 @@ const Game = () => {
       return;
     }
     try {
-      await deleteUser(deleteUsername);
+      console.log('Attempting to delete user:', deleteUsername);
+      const token = localStorage.getItem('token');
+      console.log('Token for delete request:', token ? 'Token present' : 'No token');
+      await deleteUser(deleteUsername, token);
+      console.log('User deleted successfully');
       alert('Your account has been deleted successfully.');
       handleLogout();
     } catch (error) {
-      alert('Error deleting account: ' + error.message);
+      console.error('Error deleting account:', error);
+      alert('Error deleting account: ' + (error.response?.data?.message || error.message));
     }
   };
 

@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { v4: uuidv4 } = require('uuid');
 
 exports.register = async (req, res) => {
   console.log("Registration attempt:", req.body);
@@ -69,12 +70,15 @@ exports.login = async (req, res) => {
 
 exports.guestLogin = async (req, res) => {
   try {
-    const guestUsername = `Guest_${Math.random().toString(36).substring(7)}`;
+    const guestUsername = `guest_${uuidv4().substring(0, 8)}`;
+    const guestPassword = 'guest1234';
     const initialMana = 10;
+
+    const hashedPassword = await bcrypt.hash(guestPassword, 10);
 
     const result = await req.db.query(
       'INSERT INTO users (username, password, mana) VALUES ($1, $2, $3) RETURNING id, username',
-      [guestUsername, 'guest', initialMana]
+      [guestUsername, hashedPassword, initialMana]
     );
 
     const guestUser = result.rows[0];
@@ -104,27 +108,36 @@ exports.getUserList = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   try {
+    console.log("Delete user request received:", req.body);
+    console.log("User from token:", req.user);
+
     const { username } = req.body;
     const userId = req.user.id;
 
     if (req.user.username !== username) {
+      console.log("Username mismatch:", req.user.username, username);
       return res
         .status(403)
         .json({ message: "You can only delete your own account" });
     }
 
+    console.log("Attempting to delete user with ID:", userId);
     const result = await req.db.query("DELETE FROM users WHERE id = $1", [
       userId,
     ]);
 
+    console.log("Delete query result:", result);
+
     if (result.rowCount === 0) {
+      console.log("No user found with ID:", userId);
       return res.status(404).json({ message: "User not found" });
     }
 
+    console.log("User deleted successfully:", username);
     res.json({ message: "User deleted successfully" });
   } catch (error) {
     console.error("Error deleting user:", error);
-    res.status(500).json({ message: "Error deleting user" });
+    res.status(500).json({ message: "Error deleting user", error: error.message });
   }
 };
 

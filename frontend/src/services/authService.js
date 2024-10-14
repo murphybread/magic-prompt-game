@@ -47,7 +47,7 @@ export const login = async (username, password) => {
     });
     console.log("Login response:", response.data);
     localStorage.setItem("token", response.data.token);
-    localStorage.setItem("username", username); // Add this line
+    localStorage.setItem("username", username);
     return response.data.token;
   } catch (error) {
     console.error("Login error:", error);
@@ -68,11 +68,26 @@ export const guestLogin = async () => {
   }
 };
 
-export const deleteUser = async (username) => {
+export const deleteUser = async (username, token) => {
+  console.log("Attempting to delete user:", username);
+  console.log("Full delete URL:", `${API_URL}/auth/delete`);
   try {
-    await axiosInstance.delete("/auth/delete", { data: { username } });
+    const response = await axiosInstance.delete("/auth/delete", {
+      data: { username },
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    console.log("Delete user response:", response.data);
+    return response.data;
   } catch (error) {
     console.error("Error deleting user:", error);
+    if (error.response) {
+      console.error("Error response:", error.response.data);
+      console.error("Error status:", error.response.status);
+    } else if (error.request) {
+      console.error("Error request:", error.request);
+    } else {
+      console.error("Error message:", error.message);
+    }
     throw error;
   }
 };
