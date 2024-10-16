@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { calculateManaCost, castSpell, getUserMana } from '../services/gameService';
 import { deleteUser } from '../services/authService';
+import ChatBox from './ChatBox';
 import './Game.css';
 
 const Game = () => {
@@ -136,6 +137,7 @@ const Game = () => {
           <button onClick={() => setShowDeleteConfirmation(false)}>Cancel</button>
         </div>
       )}
+      <ChatBox />
     </div>
   );
 };

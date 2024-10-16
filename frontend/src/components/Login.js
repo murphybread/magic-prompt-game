@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { login, register, guestLogin } from '../services/authService';
-import { GoogleLoginButton, TwitterLoginButton } from 'react-social-login-buttons';
 import APITester from './APITester';
 import './Login.css';
 
@@ -75,8 +74,12 @@ const Login = ({ onLogin }) => {
         {isRegistering ? 'Switch to Login' : 'Switch to Register'}
       </button>
       <button onClick={handleGuestLogin} className="guest-button">Guest Login</button>
-      <GoogleLoginButton onClick={() => handleSocialLogin('google')} />
-      <TwitterLoginButton onClick={() => handleSocialLogin('twitter')} />
+      <button onClick={() => handleSocialLogin('google')} className="social-button google-button">
+        Sign in with Google
+      </button>
+      <button onClick={() => handleSocialLogin('twitter')} className="social-button twitter-button">
+        Sign in with Twitter
+      </button>
       <APITester />
     </div>
   );

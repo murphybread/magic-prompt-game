@@ -9,6 +9,8 @@ const session = require("express-session");
 const app = express();
 
 console.log("Environment variables check:");
+
+console.log("OpenAI API Key is set:", !!process.env.OPENAI_API_KEY);
 console.log("JWT_SECRET is set:", !!process.env.JWT_SECRET);
 console.log("GOOGLE_CLIENT_ID is set:", !!process.env.GOOGLE_CLIENT_ID);
 console.log("GOOGLE_CLIENT_SECRET is set:", !!process.env.GOOGLE_CLIENT_SECRET);
@@ -73,7 +75,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/game", gameRoutes);
 
-const PORT = process.env.PORT || 8008;
+const PORT = process.env.PORT || 8008; // Changed port to 8009
 
 console.log("Attempting to start server on port:", PORT);
 

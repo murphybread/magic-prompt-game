@@ -1,0 +1,61 @@
+Error sending message: 
+AxiosError {message: "Request failed with status code 401", name: "AxiosError", code: "ERR_BAD_REQUEST", config: {…}, request: XMLHttpRequest, …}
+code: "ERR_BAD_REQUEST"
+config: Object
+message: "Request failed with status code 401"
+name: "AxiosError"
+request: XMLHttpRequest
+response: Object
+config: Object
+data: Object
+headers: AxiosHeaders
+request: XMLHttpRequest
+status: 401
+statusText: "Unauthorized"
+[[Prototype]]: Object
+constructor: ƒ Object()
+hasOwnProperty: ƒ hasOwnProperty()
+isPrototypeOf: ƒ isPrototypeOf()
+propertyIsEnumerable: ƒ propertyIsEnumerable()
+toLocaleString: ƒ toLocaleString()
+toString: ƒ toString()
+valueOf: ƒ valueOf()
+__defineGetter__: ƒ __defineGetter__()
+__defineSetter__: ƒ __defineSetter__()
+__lookupGetter__: ƒ __lookupGetter__()
+__lookupSetter__: ƒ __lookupSetter__()
+__proto__: Object
+get __proto__: ƒ get __proto__()
+length: 0
+name: "get __proto__"
+[[Prototype]]: ƒ ()
+apply: ƒ apply()
+arguments: "'caller', 'callee', and 'arguments' properties may not be accessed on strict mode functions or the arguments objects for calls to them"
+get arguments: ƒ ()
+set arguments: ƒ ()
+bind: ƒ bind()
+call: ƒ call()
+caller: "'caller', 'callee', and 'arguments' properties may not be accessed on strict mode functions or the arguments objects for calls to them"
+get caller: ƒ ()
+set caller: ƒ ()
+constructor: ƒ Function()
+length: 0
+name: "get __proto__"
+toString: ƒ toString()
+Symbol(Symbol.hasInstance): undefined
+[[Prototype]]: Object
+set __proto__: ƒ set __proto__()
+status: 401
+stack: "AxiosError: Request failed with status code 401↵ at settle (https://8db49593-86bc-4024-9db9-f98d410662af-00-19a9705pix41f.picard.replit.dev:3000/static/js/bundle.js:43875:12)↵ at XMLHttpRequest.onloadend (https://8db49593-86bc-4024-9db9-f98d410662af-00-19a9705pix41f.picard.replit.dev:3000/static/js/bundle.js:42526:66)↵ at Axios.request (https://8db49593-86bc-4024-9db9-f98d410662af-00-19a9705pix41f.picard.replit.dev:3000/static/js/bundle.js:43025:41)↵ at async sendMessage (https://8db49593-86bc-4024-9db9-f98d410662af-00-19a9705pix41f.picard.replit.dev:3000/static/js/bundle.js:329:24)"
+get stack: ƒ ()
+set stack: ƒ ()
+[[Prototype]]: Object
+constructor: ƒ AxiosError(message, code, config, request, response)
+toJSON: ƒ toJSON()
+isAxiosError: true
+[[Prototype]]: Object
+constructor: ƒ AxiosError(message, code, config, request, response)
+message: "Request failed with status code 401"
+name: "AxiosError"
+toString: ƒ toString()
+[[Prototype]]: Object

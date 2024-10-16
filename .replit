@@ -11,6 +11,18 @@ name = "Project"
 mode = "parallel"
 author = "agent"
 
+# Metadata
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd backend && npm run start"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd frontend && npm run start"
+
 [[workflows.workflow.tasks]]
 task = "workflow.run"
 args = "Start Backend"
@@ -28,7 +40,7 @@ agentRequireRestartOnSave = false
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd backend && npm run start"
+args = "cd backend && npm install && node src/app.js"
 waitForPort = 8008
 
 [[workflows.workflow]]
@@ -40,7 +52,7 @@ agentRequireRestartOnSave = false
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd frontend && npm run start"
+args = "cd frontend && npm install && npm start"
 waitForPort = 3000
 
 [[ports]]
@@ -54,3 +66,10 @@ externalPort = 80
 [[ports]]
 localPort = 8008
 externalPort = 8008
+
+[[ports]]
+localPort = 8009
+externalPort = 3001
+
+[deployment]
+run = ["sh", "-c", "cd backend && npm install && node src/app.js"]

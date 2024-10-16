@@ -5,13 +5,27 @@ const API_URL =
 
 console.log("API_URL in authService:", API_URL);
 
-const axiosInstance = axios.create({
+export const axiosInstance = axios.create({
   baseURL: API_URL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
 });
+
+// Add a request interceptor to include the token in the headers
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export const register = async (username, password) => {
   console.log("Attempting to register user:", username);
