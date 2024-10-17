@@ -1,0 +1,40 @@
+.chat-box {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px;
+}
+
+.user-input {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.user-input input {
+  flex-grow: 1;
+  padding: 10px;
+  margin-right: 10px;
+}
+
+.user-input button {
+  padding: 10px 20px;
+}
+
+.chat-response {
+  flex-grow: 1;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.image-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.image-container img {
+  max-width: 100%;
+  max-height: 300px;
+  border: 1px solid #ccc;
+}

@@ -154,7 +154,6 @@ exports.socialLoginCallback = async (req, res) => {
       { expiresIn: '1h' }
     );
 
-    // Include both token and username in the redirect URL
     res.redirect(`${process.env.FRONTEND_URL}/login?token=${token}&username=${encodeURIComponent(user.username)}`);
   } catch (error) {
     console.error("Error in social login callback:", error);

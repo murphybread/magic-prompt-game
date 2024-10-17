@@ -10,6 +10,7 @@ router.post('/calculate-mana-cost', gameController.calculateManaCost);
 router.post('/cast-spell', gameController.castSpell);
 router.get('/user-mana', gameController.getUserMana);
 router.post('/chat', chatController.generateChatResponse);
+router.post('/chat-image', chatController.generateImage);
 router.get('/test-openai', chatController.testOpenAI);
 
 module.exports = router;
