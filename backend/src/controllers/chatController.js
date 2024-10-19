@@ -1,7 +1,80 @@
 const { OpenAI } = require('openai');
+const { Storage } = require("@google-cloud/storage");
+const path = require('path');
+const axios = require('axios');
 
 const apiKey = process.env.OPENAI_API_KEY;
 const openai = new OpenAI({ apiKey });
+
+// Google Cloud Storage Client Setting
+const storage = new Storage({
+    keyFilename: path.join(__dirname, '..', 'config',process.env.GCS_KEY_FILE_PATH)  // JSON File Path of Google Cloud Storage service user
+
+});
+
+const bucketName = process.env.GCS_BUCKET_NAME;  // GCS Bucket name
+
+// Image Download and Upload to GCS
+const downloadAndUploadImage = async (imageUrl, prompt) => {
+    try {
+
+        // Image Download
+        const response = await axios({
+            method: 'GET',
+            url: imageUrl,
+            responseType: 'stream',
+        });
+
+        // Content-Type Validation
+        const contentType = response.headers['content-type'];
+        if (!contentType.startsWith('image/')) {
+            throw new Error('This url is not Image file');
+        }
+
+        // File Extension Extraction
+        const extension = contentType.split('/')[1].split(';')[0]; // 예: 'image/jpeg' -> 'jpeg'
+        console.log("content: ", contentType);
+
+        // Unique File Name Creation by Prompt
+        const filename = `${prompt}.${extension}`;
+        const storagePath = `images/${filename}`;
+
+        // GCS Bucket Object Creation
+        const bucket = storage.bucket(bucketName);
+        const file = bucket.file(storagePath);
+
+        // Upload Image Stream to GCS
+        const stream = response.data.pipe(
+            file.createWriteStream({
+                metadata: {
+                    contentType: contentType,
+                },
+            })
+        );
+
+        // Create Public URL after Upload
+        return new Promise((resolve, reject) => {
+            stream.on('finish', async () => {
+                try {
+                    // 파일을 공개적으로 설정
+                    await file.makePublic();
+                    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${file.name}`;
+                    resolve(publicUrl);
+                } catch (err) {
+                    reject(err);
+                }
+            });
+
+            stream.on('error', (err) => {
+                reject(err);
+            });
+        });
+    } catch (error) {
+        console.error('Image Download and Upload Error:', error.message);
+        throw error;
+    }
+};
+
 
 exports.generateImage = async (req, res) => {
   try {
@@ -13,9 +86,19 @@ exports.generateImage = async (req, res) => {
       size: "1024x1024",
     });
     const imageUrl = response.data[0].url;
-    res.json({ imageUrl });
+    console.log("Image URL created by OpenAI:", imageUrl);
+
+    const gcsUrl = await downloadAndUploadImage(imageUrl, prompt);
+    console.log("Image URL uploaded to GCS:", gcsUrl);
+    
+    res.json({ gcsUrl });
   } catch (error) {
     console.error('Error generating image:', error);
+    // Handle specific billing error
+    if (error.code === 'billing_hard_limit_reached') {
+      return res.status(400).json({ message: 'Billing limit has been reached. Please check your OpenAI account.' });
+    }
+    
     res.status(500).json({ message: 'Error generating image' });
   }
 };

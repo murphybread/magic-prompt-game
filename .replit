@@ -59,17 +59,10 @@ waitForPort = 3000
 localPort = 3000
 externalPort = 3000
 
-[[ports]]
-localPort = 3001
-externalPort = 80
 
 [[ports]]
 localPort = 8008
 externalPort = 8008
 
-[[ports]]
-localPort = 8009
-externalPort = 3001
 
-[deployment]
-run = ["sh", "-c", "cd backend && npm install && node src/app.js"]
+
