@@ -10,6 +10,10 @@ router.post('/guest', authController.guestLogin);
 router.get('/users', authController.getUserList);
 router.delete('/delete', authMiddleware, authController.deleteUser);
 
+// New routes for user profile
+router.get('/profile', authMiddleware, authController.getUserProfile);
+router.put('/profile', authMiddleware, authController.updateUserProfile);
+
 // Google OAuth routes
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get('/google/callback', 

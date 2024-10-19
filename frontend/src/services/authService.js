@@ -105,3 +105,16 @@ export const deleteUser = async (username, token) => {
     throw error;
   }
 };
+
+export const updateUserProfile = async (profileData) => {
+  console.log("Attempting to update user profile");
+  console.log("Full update profile URL:", `${API_URL}/auth/profile`);
+  try {
+    const response = await axiosInstance.put("/auth/profile", profileData);
+    console.log("Update profile response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+    throw error;
+  }
+};

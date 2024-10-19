@@ -1,0 +1,39 @@
+.user-profile {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.user-profile h3 {
+  margin-top: 0;
+}
+
+.user-profile form div {
+  margin-bottom: 10px;
+}
+
+.user-profile label {
+  display: inline-block;
+  width: 100px;
+}
+
+.user-profile input {
+  width: 200px;
+  padding: 5px;
+}
+
+.user-profile button {
+  margin-right: 10px;
+  padding: 5px 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.user-profile button:hover {
+  background-color: #45a049;
+}

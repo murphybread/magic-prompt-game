@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { calculateManaCost, castSpell, getUserMana } from '../services/gameService';
 import { deleteUser } from '../services/authService';
 import ChatBox from './ChatBox';
+import UserProfile from './UserProfile';
 import './Game.css';
 
 const Game = () => {
@@ -9,32 +10,55 @@ const Game = () => {
   const [modifiers, setModifiers] = useState([]);
   const [manaCost, setManaCost] = useState(null);
   const [castResult, setCastResult] = useState('');
-  const [userMana, setUserMana] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [deleteUsername, setDeleteUsername] = useState('');
-  const [loggedInUsername, setLoggedInUsername] = useState('');
 
   useEffect(() => {
-    fetchUserMana();
+    fetchUserProfile();
+    const manaRegenInterval = setInterval(regenerateMana, 5000); // Regenerate mana every 5 seconds
+    return () => clearInterval(manaRegenInterval);
   }, []);
 
-  const fetchUserMana = async () => {
+  const fetchUserProfile = async () => {
     try {
-      console.log('Fetching user mana...');
-      const token = localStorage.getItem('token');
-      console.log('Token from localStorage:', token ? 'Token present' : 'No token');
+      console.log('Fetching user profile...');
       const result = await getUserMana();
-      console.log('User mana result:', result);
-      setUserMana(result.mana);
-      setLoggedInUsername(result.username);
+      console.log('User profile result:', result);
+      setUserProfile(result);
     } catch (error) {
-      console.error('Error fetching user mana:', error);
+      console.error('Error fetching user profile:', error);
       if (error.response && error.response.status === 401) {
-        console.log('Unauthorized error when fetching mana');
+        console.log('Unauthorized error when fetching profile');
         alert('Your session has expired. Please log in again.');
         handleLogout();
       } else {
-        alert('Error fetching user mana');
+        alert('Error fetching user profile');
+      }
+    }
+  };
+
+  const regenerateMana = async () => {
+    if (userProfile) {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/game/regenerate-mana`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        if (!response.ok) {
+          throw new Error('Failed to regenerate mana');
+        }
+        const data = await response.json();
+        setUserProfile(prevProfile => ({
+          ...prevProfile,
+          mana: data.mana,
+          max_mana: data.max_mana
+        }));
+      } catch (error) {
+        console.error('Error regenerating mana:', error);
       }
     }
   };
@@ -59,17 +83,31 @@ const Game = () => {
       return;
     }
 
+    if (userProfile.mana < manaCost) {
+      alert('Not enough mana to cast the spell');
+      return;
+    }
+
     try {
       const result = await castSpell('Fireball', manaCost);
       setCastResult(result.message);
-      setUserMana(result.remainingMana);
+      setUserProfile(prevProfile => ({
+        ...prevProfile,
+        mana: result.remainingMana,
+        level: result.newLevel,
+        experience: result.newExperience,
+        max_mana: result.newMaxMana
+      }));
+      if (result.leveledUp) {
+        alert(`Congratulations! You've leveled up to level ${result.newLevel}!`);
+      }
     } catch (error) {
       alert(error.response ? error.response.data.message : 'Error casting spell');
     }
   };
 
   const handleDeleteUser = async () => {
-    if (deleteUsername !== loggedInUsername) {
+    if (deleteUsername !== userProfile.username) {
       alert('The entered username does not match your logged-in username.');
       return;
     }
@@ -93,10 +131,22 @@ const Game = () => {
         <button onClick={() => setShowDeleteConfirmation(true)} className="delete-id-button">
           Delete ID
         </button>
-        <span className="username-display">Username: {loggedInUsername}</span>
+        {userProfile && <span className="username-display">Username: {userProfile.username}</span>}
       </div>
       <h2>Magic Game</h2>
-      <p>Your Mana: {userMana !== null ? userMana : 'Loading...'}</p>
+      {userProfile && (
+        <div>
+          <UserProfile
+            profile={userProfile}
+            onProfileUpdate={setUserProfile}
+          />
+          <div className="mana-display">
+            <p>Current Mana: {userProfile.mana} / {userProfile.max_mana}</p>
+            <p>Level: {userProfile.level}</p>
+            <p>Experience: {userProfile.experience} / 100</p>
+          </div>
+        </div>
+      )}
       <div>
         <label>
           Spell Level:
@@ -114,7 +164,7 @@ const Game = () => {
       {manaCost !== null && (
         <div>
           <p>Mana Cost: {manaCost}</p>
-          <button onClick={handleCastSpell}>Cast Fireball</button>
+          <button onClick={handleCastSpell} disabled={userProfile && userProfile.mana < manaCost}>Cast Fireball</button>
         </div>
       )}
       {castResult && <p>{castResult}</p>}
@@ -130,7 +180,7 @@ const Game = () => {
           />
           <button 
             onClick={handleDeleteUser}
-            disabled={deleteUsername !== loggedInUsername}
+            disabled={deleteUsername !== userProfile?.username}
           >
             Confirm Delete
           </button>

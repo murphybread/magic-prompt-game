@@ -20,8 +20,8 @@ exports.register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await req.db.query(
-      "INSERT INTO users (username, email, password, mana) VALUES ($1, $2, $3, $4) RETURNING id",
-      [username, email, hashedPassword, 100],
+      "INSERT INTO users (username, email, password, mana, level, experience, max_mana) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id",
+      [username, email, hashedPassword, 100, 1, 0, 100],
     );
 
     const userId = result.rows[0].id;
@@ -77,8 +77,8 @@ exports.guestLogin = async (req, res) => {
     const hashedPassword = await bcrypt.hash(guestPassword, 10);
 
     const result = await req.db.query(
-      'INSERT INTO users (username, password, mana) VALUES ($1, $2, $3) RETURNING id, username',
-      [guestUsername, hashedPassword, initialMana]
+      'INSERT INTO users (username, password, mana, level, experience, max_mana) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, username',
+      [guestUsername, hashedPassword, initialMana, 1, 0, initialMana]
     );
 
     const guestUser = result.rows[0];
@@ -93,6 +93,46 @@ exports.guestLogin = async (req, res) => {
   } catch (error) {
     console.error('Error creating guest user:', error);
     res.status(500).json({ message: 'Error creating guest user' });
+  }
+};
+
+exports.getUserProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const result = await req.db.query(
+      "SELECT id, username, email, mana, level, experience, max_mana FROM users WHERE id = $1",
+      [userId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    res.status(500).json({ message: "Error fetching user profile" });
+  }
+};
+
+exports.updateUserProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { email } = req.body;
+
+    const result = await req.db.query(
+      "UPDATE users SET email = $1 WHERE id = $2 RETURNING id, username, email, mana, level, experience, max_mana",
+      [email, userId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+    res.status(500).json({ message: "Error updating user profile" });
   }
 };
 
