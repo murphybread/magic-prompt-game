@@ -6,6 +6,8 @@
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [imageUrls, setImageUrls] = useState([]);
+    const [loading, setLoading] = useState(false); // Loading state
+
   
     const sendMessage = async () => {
       if (input.trim() === '') return;
@@ -13,7 +15,9 @@
       const newMessage = { text: input, sender: 'user' };
       setMessages([...messages, newMessage]);
       setInput('');
-  
+      
+      setLoading(true); // Start spinner
+
       try {
         const chatResponse = await axiosInstance.post('/game/chat', { message: input });
         setMessages(prevMessages => [...prevMessages,
@@ -35,6 +39,9 @@
       } catch (error) {
         console.error('Error sending message:', error);
         setMessages(prevMessages => [...prevMessages, { text: 'Error: Unable to get response from the server.', sender: 'bot' }]);
+      } finally{
+        setLoading(false); // Stop spinner
+
       }
     };
   
@@ -50,6 +57,8 @@
           />
           <button onClick={sendMessage}>Send</button>
         </div>
+        {loading && <div className="spinner"></div>} {/* Spinner displayed when loading is true */}
+
         <div className="chat-response">
           {messages.map((message, index) => (
             <pre key={index} className={`message ${message.sender}`}>
