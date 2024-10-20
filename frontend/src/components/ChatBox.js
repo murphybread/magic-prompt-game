@@ -16,12 +16,14 @@
   
       try {
         const chatResponse = await axiosInstance.post('/game/chat', { message: input });
-        setMessages(prevMessages => [...prevMessages, { text: chatResponse.data.message, sender: 'bot' }]);
+        setMessages(prevMessages => [...prevMessages,
+                                     { text: `Name: ${chatResponse.data.message.Name}\nCost: ${chatResponse.data.message.Cost}\nDamage: ${chatResponse.data.message.Damage}\nEffect: ${chatResponse.data.message.Effect}\nType: ${chatResponse.data.message.Type}\nDescription: ${chatResponse.data.message.Description}`,
+                                      sender: 'bot' }]);
   
   
         if (input.toLowerCase().includes("generate image") || input.toLowerCase().includes("create image")) {
   
-          const imageResponse = await axiosInstance.post('/game/chat-image', { prompt: input });
+          const imageResponse = await axiosInstance.post('/game/chat-image', { description: chatResponse.data.message.Description });
           console.log("Image Response:", imageResponse.data); 
           if (imageResponse.data.gcsUrl) {
             setImageUrls(prevUrls => [...prevUrls, imageResponse.data.gcsUrl]);
