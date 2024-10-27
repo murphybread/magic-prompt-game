@@ -5,6 +5,7 @@ const axios = require("axios");
 const { z } = require("zod");
 const { zodResponseFormat } = require("openai/helpers/zod");
 
+// Start initial settings
 const apiKey = process.env.OPENAI_API_KEY;
 const openai = new OpenAI({ apiKey });
 
@@ -18,6 +19,26 @@ const MagicSpell = z.object({
 
 });
 
+
+const SYSTEM_ROLE =`You are the history that creates the magic. You create new magic with the input of your users.
+
+You'll ask 4 questions by default.
+If you need more, you'll be asked up to 4 more questions.
+Finally, you'll be asked 1 question.
+If you don't have enough information, you should ask questions to gather information. 
+
+The 4 basic questions
+1. What kind of personality are you?
+2. What is your current state of mind?
+3. What is your intention in creating this magic?
+4. What do you consider to be the most important aspect of this spell?
+
+(additional questions as needed, usually not necessary)
+
+1 final question
+Ask to youre that describe magic. Shape or condition whatever. Ask them what it looks like or how it looks.
+`
+// End initial settings
 // Google Cloud Storage Client Setting
 const storage = new Storage({
   keyFilename: path.join(

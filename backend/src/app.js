@@ -56,6 +56,12 @@ app.use(
     secret: process.env.SESSION_SECRET || "your_session_secret",
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === "production", // 프로덕션에서는 HTTPS 사용 시 true
+      httpOnly: true, // 클라이언트 측 스크립트 접근 불가
+      maxAge: 1000 * 60 * 60 * 24, // 1일
+      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // CSRF 방지
+    },
   }),
 );
 
