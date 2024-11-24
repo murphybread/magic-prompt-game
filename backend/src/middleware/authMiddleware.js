@@ -1,6 +1,6 @@
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
-module.exports = (req, res, next) => {
+export default (req, res, next) => {
   console.log("Auth middleware triggered");
   const token = req.header('Authorization')?.replace('Bearer ', '');
   console.log('Received token:', token ? 'Token present' : 'No token');

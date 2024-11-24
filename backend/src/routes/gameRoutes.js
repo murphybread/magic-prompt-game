@@ -1,8 +1,9 @@
-const express = require('express');
+import express from 'express';
+import * as gameController from '../controllers/gameController.js';
+import * as chatController from '../controllers/chatController.js';
+import authMiddleware from '../middleware/authMiddleware.js';
+
 const router = express.Router();
-const gameController = require('../controllers/gameController');
-const chatController = require('../controllers/chatController');
-const authMiddleware = require('../middleware/authMiddleware');
 
 router.use(authMiddleware);
 
@@ -14,4 +15,4 @@ router.post('/chat', chatController.generateChatResponse);
 router.post('/chat-image', chatController.generateImage);
 router.get('/test-openai', chatController.testOpenAI);
 
-module.exports = router;
+export default router;

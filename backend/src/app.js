@@ -1,10 +1,21 @@
-const express = require("express");
-const cors = require("cors");
-const { Pool } = require("pg");
-const authRoutes = require("./routes/authRoutes");
-const gameRoutes = require("./routes/gameRoutes");
-const passport = require("./config/passport");
-const session = require("express-session");
+import express from "express";
+import cors from "cors";
+// import { Pool } from "pg";
+import authRoutes from "./routes/authRoutes.js";
+import gameRoutes from "./routes/gameRoutes.js";
+import passport from "./config/passport.js";
+import session from "express-session";
+import path from "path";
+import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+
+import pg from "pg";
+const { Pool } = pg;
+dotenv.config(); // 환경 변수 로드
+
+// __dirname 설정 (ESM에서는 직접 사용 불가)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -17,7 +28,7 @@ console.log("GOOGLE_CLIENT_SECRET is set:", !!process.env.GOOGLE_CLIENT_SECRET);
 console.log("TWITTER_CONSUMER_KEY is set:", !!process.env.TWITTER_CONSUMER_KEY);
 console.log(
   "TWITTER_CONSUMER_SECRET is set:",
-  !!process.env.TWITTER_CONSUMER_SECRET,
+  !!process.env.TWITTER_CONSUMER_SECRET
 );
 console.log("SESSION_SECRET is set:", !!process.env.SESSION_SECRET);
 console.log("FRONTEND_URL is set:", !!process.env.FRONTEND_URL);
@@ -25,7 +36,7 @@ console.log("BACKEND_URL is set:", !!process.env.BACKEND_URL);
 
 console.log(
   "Twitter callback URL:",
-  `${process.env.BACKEND_URL}/api/auth/twitter/callback`,
+  `${process.env.BACKEND_URL}/api/auth/twitter/callback`
 );
 
 const pool = new Pool({
@@ -62,7 +73,7 @@ app.use(
       maxAge: 1000 * 60 * 60 * 24, // 1일
       sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // CSRF 방지
     },
-  }),
+  })
 );
 
 app.use(passport.initialize());
@@ -81,7 +92,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/game", gameRoutes);
 
-const PORT = process.env.PORT || 8008; // Changed port to 8009
+const PORT = process.env.PORT || 8008; // Changed port to 8008
 
 console.log("Attempting to start server on port:", PORT);
 
@@ -93,4 +104,10 @@ const server = app
     console.error("Error starting server:", err);
   });
 
-module.exports = app;
+// Add static options
+app.use(express.static(path.join(__dirname, "../builds")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../builds", "index.html"));
+});
+
+export default app;

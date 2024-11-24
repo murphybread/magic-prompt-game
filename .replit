@@ -60,8 +60,17 @@ localPort = 3000
 externalPort = 3000
 
 [[ports]]
+localPort = 3001
+externalPort = 80
+
+[[ports]]
 localPort = 8008
 externalPort = 8008
+
+[deployment]
+build = ["sh", "-c", "cd frontend && npm install && npm run build"]
+deploymentTarget = "static"
+publicDir = "./builds"
 
 
 

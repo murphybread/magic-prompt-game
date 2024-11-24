@@ -11,6 +11,17 @@ This is a simple magic game web application using Express.js and React, with bas
    - 원하는 기능
       -  처음 소셜 로그인 시 인증 후 유저가 DB에 없다면 Create User 기능 수행 후 로그인
       -  이후 소셜 로그인 시 DB에 유저가 있다면 해당 정보로 로그인
+
+CommonJS -> ESM 마이그레이션중
+backend
+- [x] app.js
+- [x] config/passport
+- [x] routes/authRoutes
+- [x] routes/gameRoutes
+- [x] src/controllers/authControllers
+- [x] src/controllers/chatControllers
+- [x]] src/controllers/gameControllers
+
 ## Setup
 
 ### Backend
