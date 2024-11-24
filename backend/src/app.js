@@ -5,6 +5,7 @@ const authRoutes = require("./routes/authRoutes");
 const gameRoutes = require("./routes/gameRoutes");
 const passport = require("./config/passport");
 const session = require("express-session");
+const path = require("path");
 
 const app = express();
 
@@ -92,5 +93,11 @@ const server = app
   .on("error", (err) => {
     console.error("Error starting server:", err);
   });
+
+// Add static options
+app.use(express.static(path.join(__dirname, "../builds")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../builds", "index.html"));
+});
 
 module.exports = app;
