@@ -11,8 +11,26 @@ This is a simple magic game web application using Express.js and React, with bas
    - 원하는 기능
       -  처음 소셜 로그인 시 인증 후 유저가 DB에 없다면 Create User 기능 수행 후 로그인
       -  이후 소셜 로그인 시 DB에 유저가 있다면 해당 정보로 로그인
+1.1.2: 트위터 소셜 로그인 성공
+1.2.0: openai chat서비스 기능 추가
+- openai 기능추가
+1.3.0: openai chatbot 및 이미지생성기능 추가
+- openai요청 후 대답 출력 + 이미지 출력
+- 해당 이미지 google cloud storage 에 업로드
+	1.3.1: structured output 기능을 통해 정해진 양식 출력
 
-CommonJS -> ESM 마이그레이션중
+
+- [x] card  스키마 테이블 만들기 ✅ 2024-10-22
+- [ ] 유저가 새로운 카드 생성시 card테이블에도 해당 정보가 기록되게 하기
+- [ ] card 생성시 유저로부터 주관적 정보 + 객관정 정보 입력받기
+	- [ ] 주관적 정보는 좋아하는 성격, 마법에 담긴 의도, 타입 등등 거짓말을 쳐도 상관없는것
+		- [ ] 기능 구현을 위해서 chatgpt의 [multi turn방식](https://platform.openai.com/docs/guides/text-generation/conversations-and-context) 참고 or realtimeAPI(stateful이 기본임)
+	- [ ] 객관적인 정보는 유저 레벨, 입력된 마나, 시간, 날씨, 기타 유저 정보 등
+- [ ]  `Socket.io` 를 활용한 양방향 통신
+- [ ] `Socket.io` 의 room  기능을 활용한 2인 유저 플레이 
+
+
+CommonJS -> ESM 마이그레이션 dhksfy
 backend
 - [x] app.js
 - [x] config/passport
