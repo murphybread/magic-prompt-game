@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-// import { Pool } from "pg";
 import authRoutes from "./routes/authRoutes.js";
 import gameRoutes from "./routes/gameRoutes.js";
 import passport from "./config/passport.js";
@@ -16,6 +15,8 @@ dotenv.config(); // 환경 변수 로드
 // __dirname 설정 (ESM에서는 직접 사용 불가)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+
 
 const app = express();
 
@@ -103,6 +104,12 @@ const server = app
   .on("error", (err) => {
     console.error("Error starting server:", err);
   });
+
+// Add static options
+app.use(express.static(path.join(__dirname, "../builds")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../builds", "index.html"));
+});
 
 // Add static options
 app.use(express.static(path.join(__dirname, "../builds")));
