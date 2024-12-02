@@ -1,15 +1,15 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const { v4: uuidv4 } = require('uuid');
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid";
 
-exports.register = async (req, res) => {
+export const register = async (req, res) => {
   console.log("Registration attempt:", req.body);
   const { username, email, password } = req.body;
 
   try {
     const userCheck = await req.db.query(
       "SELECT * FROM users WHERE username = $1 OR email = $2",
-      [username, email],
+      [username, email]
     );
     if (userCheck.rows.length > 0) {
       return res
@@ -21,7 +21,7 @@ exports.register = async (req, res) => {
 
     const result = await req.db.query(
       "INSERT INTO users (username, email, password, mana, level, experience, max_mana) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id",
-      [username, email, hashedPassword, 100, 1, 0, 100],
+      [username, email, hashedPassword, 100, 1, 0, 100]
     );
 
     const userId = result.rows[0].id;
@@ -29,7 +29,7 @@ exports.register = async (req, res) => {
     const token = jwt.sign(
       { id: userId, username, email },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" },
+      { expiresIn: "1h" }
     );
 
     console.log("User registered successfully:", username);
@@ -40,13 +40,13 @@ exports.register = async (req, res) => {
   }
 };
 
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
   try {
     const { username, password } = req.body;
 
     const result = await req.db.query(
       "SELECT * FROM users WHERE username = $1",
-      [username],
+      [username]
     );
     const user = result.rows[0];
 
@@ -68,16 +68,16 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.guestLogin = async (req, res) => {
+export const guestLogin = async (req, res) => {
   try {
     const guestUsername = `guest_${uuidv4().substring(0, 8)}`;
-    const guestPassword = 'guest1234';
+    const guestPassword = "guest1234";
     const initialMana = 10;
 
     const hashedPassword = await bcrypt.hash(guestPassword, 10);
 
     const result = await req.db.query(
-      'INSERT INTO users (username, password, mana, level, experience, max_mana) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, username',
+      "INSERT INTO users (username, password, mana, level, experience, max_mana) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, username",
       [guestUsername, hashedPassword, initialMana, 1, 0, initialMana]
     );
 
@@ -86,17 +86,17 @@ exports.guestLogin = async (req, res) => {
     const token = jwt.sign(
       { id: guestUser.id, username: guestUser.username },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: "1h" }
     );
 
     res.json({ token, username: guestUser.username });
   } catch (error) {
-    console.error('Error creating guest user:', error);
-    res.status(500).json({ message: 'Error creating guest user' });
+    console.error("Error creating guest user:", error);
+    res.status(500).json({ message: "Error creating guest user" });
   }
 };
 
-exports.getUserProfile = async (req, res) => {
+export const getUserProfile = async (req, res) => {
   try {
     const userId = req.user.id;
     const result = await req.db.query(
@@ -115,7 +115,7 @@ exports.getUserProfile = async (req, res) => {
   }
 };
 
-exports.updateUserProfile = async (req, res) => {
+export const updateUserProfile = async (req, res) => {
   try {
     const userId = req.user.id;
     const { email } = req.body;
@@ -136,7 +136,7 @@ exports.updateUserProfile = async (req, res) => {
   }
 };
 
-exports.getUserList = async (req, res) => {
+export const getUserList = async (req, res) => {
   try {
     const result = await req.db.query("SELECT id, username FROM users");
     res.json(result.rows);
@@ -146,7 +146,7 @@ exports.getUserList = async (req, res) => {
   }
 };
 
-exports.deleteUser = async (req, res) => {
+export const deleteUser = async (req, res) => {
   try {
     console.log("Delete user request received:", req.body);
     console.log("User from token:", req.user);
@@ -181,7 +181,7 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-exports.socialLoginCallback = async (req, res) => {
+export const socialLoginCallback = async (req, res) => {
   try {
     const user = req.user;
     if (!user) {
@@ -191,7 +191,7 @@ exports.socialLoginCallback = async (req, res) => {
     const token = jwt.sign(
       { id: user.id, username: user.username },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: "1h" }
     );
 
     res.redirect(`${process.env.FRONTEND_URL}/login?token=${token}&username=${encodeURIComponent(user.username)}`);
@@ -200,5 +200,3 @@ exports.socialLoginCallback = async (req, res) => {
     res.redirect(`${process.env.FRONTEND_URL}/login?error=Authentication failed`);
   }
 };
-
-module.exports = exports;

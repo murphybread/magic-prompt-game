@@ -1,8 +1,9 @@
-const express = require('express');
+import express from 'express';
+import * as authController from '../controllers/authController.js';
+import authMiddleware from '../middleware/authMiddleware.js';
+import passport from 'passport';
+
 const router = express.Router();
-const authController = require('../controllers/authController');
-const authMiddleware = require('../middleware/authMiddleware');
-const passport = require('passport');
 
 router.post('/register', authController.register);
 router.post('/login', authController.login);
@@ -28,4 +29,4 @@ router.get('/twitter/callback',
   authController.socialLoginCallback
 );
 
-module.exports = router;
+export default router;
