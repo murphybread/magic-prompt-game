@@ -53,3 +53,21 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+.message.user {
+  background-color: #b2ff98;
+  color: #333;
+  text-align: right;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 5px 0;
+}
+
+.message.assistant {
+  background-color: #5097f3;
+  color: #333;
+  text-align: left;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 5px 0;
+}
