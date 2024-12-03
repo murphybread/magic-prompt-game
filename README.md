@@ -11,13 +11,20 @@ This is a simple magic game web application using Express.js and React, with bas
    - 원하는 기능
       -  처음 소셜 로그인 시 인증 후 유저가 DB에 없다면 Create User 기능 수행 후 로그인
       -  이후 소셜 로그인 시 DB에 유저가 있다면 해당 정보로 로그인
+
 1.1.2: 트위터 소셜 로그인 성공
+
 1.2.0: openai chat서비스 기능 추가
 - openai 기능추가
+
 1.3.0: openai chatbot 및 이미지생성기능 추가
 - openai요청 후 대답 출력 + 이미지 출력
 - 해당 이미지 google cloud storage 에 업로드
-	1.3.1: structured output 기능을 통해 정해진 양식 출력
+
+1.3.1: structured output 기능을 통해 정해진 양식 출력
+
+1.3.2: multiturnconversation 방식 구현. 최종적으로 특정 키워드 입력시  structured output기능 사용. 이후 기존 generated Image동작
+
 #### nextStep
 - `Socket.io` 를 활용한 양방향 통신
 - Multiturn방식의 대화 구현 (로컬에서 확인 완료)
