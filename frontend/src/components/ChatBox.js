@@ -12,39 +12,64 @@
     const sendMessage = async () => {
       if (input.trim() === '') return;
   
-      const newMessage = { text: input, sender: 'user' };
-      setMessages([...messages, newMessage]);
-      setInput('');
       
+      setMessages(prevMessages => [
+        ...prevMessages,
+        { role: 'user', content: input }
+      ]);
+      setInput('');
       setLoading(true); // Start spinner
 
       try {
-        const chatResponse = await axiosInstance.post('/game/chat', { message: input });
-        setMessages(prevMessages => [...prevMessages,
-                                     { text: `Name: ${chatResponse.data.message.Name}\nCost: ${chatResponse.data.message.Cost}\nDamage: ${chatResponse.data.message.Damage}\nEffect: ${chatResponse.data.message.Effect}\nType: ${chatResponse.data.message.Type}\nDescription: ${chatResponse.data.message.Description}`,
-                                      sender: 'bot' }]);
+
+
+        
+        const response = await axiosInstance.post('/game/start-conversation', {
+          messages: messages,
+          userResponse: input,
+        });
   
+        const { nextQuestion, description, lastAssistantMessage } = response.data;
   
-        if (input.toLowerCase().includes("generate image") || input.toLowerCase().includes("create image")) {
+        if (nextQuestion) {
+          setMessages(prevMessages => [
+            ...prevMessages,
+            { role: 'assistant', content: nextQuestion },
+          ]);
+        }
   
-          const imageResponse = await axiosInstance.post('/game/chat-image', { description: chatResponse.data.message.Description });
+        if (description) {
+
+          const imageResponse = await axiosInstance.post('/game/chat-image', { description});
           console.log("Image Response:", imageResponse.data); 
           if (imageResponse.data.gcsUrl) {
             setImageUrls(prevUrls => [...prevUrls, imageResponse.data.gcsUrl]);
           } else {
             setMessages(prevMessages => [...prevMessages, { text: 'Error generating image.', sender: 'bot' }]);
           }
+
         }
+  
+        if (lastAssistantMessage) {
+          setMessages(prevMessages => [
+            ...prevMessages,
+            { role: 'assistant', content: `Last Assistant Message: ${lastAssistantMessage}` },
+          ]);
+        }
+  
+
   
       } catch (error) {
         console.error('Error sending message:', error);
-        setMessages(prevMessages => [...prevMessages, { text: 'Error: Unable to get response from the server.', sender: 'bot' }]);
+        setMessages(prevMessages => [
+          ...prevMessages,
+          { role: 'assistant', content: 'Error: Unable to get response from the server.' },
+        ]);
       } finally{
         setLoading(false); // Stop spinner
 
       }
     };
-  
   
     return (
       <div className="chat-box">
@@ -55,15 +80,15 @@
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
           />
-          <button onClick={sendMessage}>Send</button>
+          <button onClick={sendMessage} disabled={loading}>Send</button>
         </div>
-        {loading && <div className="spinner"></div>} {/* Spinner displayed when loading is true */}
-
+        {loading && <div className="spinner"></div>}
         <div className="chat-response">
           {messages.map((message, index) => (
-            <pre key={index} className={`message ${message.sender}`}>
-              {message.text}
+            <pre key={index} className={`message ${message.role}`}>
+              {message.content}
             </pre>
+          
           ))}
         </div>
         {imageUrls.length > 0 && (
@@ -75,7 +100,7 @@
         )}
       </div>
     );
-  };
+  }
   
   export default ChatBox;
   

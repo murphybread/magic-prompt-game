@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API_URL =
-  process.env.REACT_APP_BACKEND_URL || "https://default-url.example.com/api";
+  process.env.REACT_APP_API_URL || "https://default-url.example.com/api";
 
 console.log("API_URL in authService:", API_URL);
 

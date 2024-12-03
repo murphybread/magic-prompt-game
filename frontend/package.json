@@ -13,7 +13,7 @@
     "eslint-config-react-app": "^7.0.1"
   },
   "scripts": {
-    "start": "REACT_APP_API_URL=https://8db49593-86bc-4024-9db9-f98d410662af-00-19a9705pix41f.picard.replit.dev:8008/api PORT=3000 CHOKIDAR_USEPOLLING=true react-scripts --max-old-space-size=4096 start",
+    "start": "react-scripts --max-old-space-size=4096 start",
     "build": "rm -rf ../builds && react-scripts build && mv build ../builds",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
