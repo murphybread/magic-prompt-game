@@ -1,5 +1,5 @@
 import axios from "axios";
-import { logVars, logSecrets, logErrors } from "../utils/logging.js";
+import { logVars,logErrors } from "../utils/logging.js";
 
 
 const API_URL =

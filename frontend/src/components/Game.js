@@ -5,8 +5,6 @@ import ChatBox from './ChatBox';
 import UserProfile from './UserProfile';
 import './Game.css';
 
-import { logVars, logSecrets, logErrors } from "../utils/logging.js";
-
 const Game = () => {
   const [spellLevel, setSpellLevel] = useState(1);
   const [modifiers, setModifiers] = useState([]);
@@ -24,14 +22,14 @@ const Game = () => {
 
   const fetchUserProfile = async () => {
     try {
-      logVars('Fetching user profile...');
+      console.log('Fetching user profile...');
       const result = await getUserMana();
-      
+      console.log('User profile result:', result);
       setUserProfile(result);
     } catch (error) {
-      logErrors('Error fetching user profile:', error);
+      console.error('Error fetching user profile:', error);
       if (error.response && error.response.status === 401) {
-        logVars('Unauthorized error when fetching profile');
+        console.log('Unauthorized error when fetching profile');
         alert('Your session has expired. Please log in again.');
         handleLogout();
       } else {
@@ -60,7 +58,7 @@ const Game = () => {
           max_mana: data.max_mana
         }));
       } catch (error) {
-        logErrors('Error regenerating mana:', error);
+        console.error('Error regenerating mana:', error);
       }
     }
   };
@@ -114,15 +112,15 @@ const Game = () => {
       return;
     }
     try {
-      
+      console.log('Attempting to delete user:', deleteUsername);
       const token = localStorage.getItem('token');
-      
+      console.log('Token for delete request:', token ? 'Token present' : 'No token');
       await deleteUser(deleteUsername, token);
-      logVars('User deleted successfully');
+      console.log('User deleted successfully');
       alert('Your account has been deleted successfully.');
       handleLogout();
     } catch (error) {
-      logErrors('Error deleting account:', error);
+      console.error('Error deleting account:', error);
       alert('Error deleting account: ' + (error.response?.data?.message || error.message));
     }
   };

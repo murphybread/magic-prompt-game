@@ -1,5 +1,19 @@
 # Magic Game Web Application
 
+
+프로젝트소개: 사용자별로 여러번 질문을 받아 요청마다 고유한 마법을 생성AI를 통해 만듭니다.
+
+목표
+- [x] 사용자로부터 여러번 정해진 질문을 받기
+- [ ] 사용자의 정보 DB에 접근해서 추가 확인
+- [x] 출력된 형식을 이용하여 마법 정보 텍스트로 만들기
+- [x] 출력된 형식의 묘사를 이용하여 생성 AI로 그림만들기
+- [ ] 생성된 마법을 정보에 맞춰서 카드화 하기
+- [ ] 생성된 마법 정보를 DB에 업로드(마법 정보 텍스트 및 이미지 URL)
+- [ ] 유저별 소지중인 마법 카드를 확인하는 인벤토리 시스템
+
+
+
 This is a simple magic game web application using Express.js and React, with basic authentication, social login, and mana cost calculation.
 
 1.0.0: 백엔드(Express)와 프론트엔드(React)간의 연동. 백엔드의 API 기능을 프론트엔드의 버튼을 클릭하였을 때 동작 가능 여부 확인 (Key Word CORS )

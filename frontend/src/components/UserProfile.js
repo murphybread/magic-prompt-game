@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { updateUserProfile } from '../services/authService';
 import './UserProfile.css';
-import { logVars, logSecrets, logErrors } from "../utils/logging.js";
+import { logErrors } from "../utils/logging.js";
 
 const UserProfile = ({ profile, onProfileUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);

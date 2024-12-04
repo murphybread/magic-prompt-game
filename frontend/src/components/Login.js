@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { login, register, guestLogin } from '../services/authService';
 import './Login.css';
-import { logVars, logSecrets, logErrors } from "../utils/logging.js";
+import { logVars,logErrors } from "../utils/logging.js";
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
