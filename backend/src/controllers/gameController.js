@@ -1,5 +1,6 @@
 import pg from 'pg';
 const { Pool } = pg;
+import { logVars, logSecrets, logErrors } from "../utils/logging.js";
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -73,7 +74,7 @@ export const castSpell = async (req, res) => {
       newMaxMana: newMaxMana,
     });
   } catch (error) {
-    console.error('Error casting spell:', error);
+    logErrors('Error casting spell:', error);
     res.status(500).json({ message: 'Error casting spell' });
   }
 };
@@ -93,7 +94,7 @@ export const getUserMana = async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Error fetching user mana:', error);
+    logErrors('Error fetching user mana:', error);
     res.status(500).json({ message: 'Error fetching user mana' });
   }
 };
@@ -119,7 +120,7 @@ export const regenerateMana = async (req, res) => {
 
     res.json({ mana: newMana, max_mana });
   } catch (error) {
-    console.error('Error regenerating mana:', error);
+    logErrors('Error regenerating mana:', error);
     res.status(500).json({ message: 'Error regenerating mana' });
   }
 };

@@ -11,6 +11,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config();
 
+// 커스텀 logging 설정
+import { logVars, logSecrets, logErrors } from "../utils/logging.js";
+
+
 // Start initial settings
 const apiKey = process.env.OPENAI_API_KEY;
 const openai = new OpenAI({ apiKey });
@@ -70,7 +74,7 @@ export const downloadAndUploadImage = async (imageUrl, description) => {
 
     // File Extension Extraction
     const extension = contentType.split("/")[1].split(";")[0];
-    console.log("content: ", contentType);
+    logVars("content: ", contentType);
 
     // Unique File Name Creation by Prompt
     const filename = `${description}.${extension}`;
@@ -108,7 +112,7 @@ export const downloadAndUploadImage = async (imageUrl, description) => {
       });
     });
   } catch (error) {
-    console.error("Image Download and Upload Error:", error.message);
+    logErrors("Image Download and Upload Error:", error.message);
     throw error;
   }
 };
@@ -123,14 +127,14 @@ export const generateImage = async (req, res) => {
       size: "1024x1024",
     });
     const imageUrl = response.data[0].url;
-    console.log("Image URL created by OpenAI:", imageUrl);
+    logSecrets("Image URL created by OpenAI:", imageUrl);
 
     const gcsUrl = await downloadAndUploadImage(imageUrl, description);
-    console.log("Image URL uploaded to GCS:", gcsUrl);
+    logSecrets("Image URL uploaded to GCS:", gcsUrl);
 
     res.json({ gcsUrl });
   } catch (error) {
-    console.error("Error generating image:", error);
+    logErrors("Error generating image:", error);
     if (error.code === "billing_hard_limit_reached") {
       return res
         .status(400)
@@ -160,12 +164,12 @@ export const generateChatResponse = async (req, res) => {
     });
 
     const botResponse = response.choices[0].message.parsed;
-    console.log(`botResponse : ${botResponse}`);
-    console.log(`chat botresponse description: ${botResponse.Description}`);
+    logSecrets(`botResponse : ${botResponse}`);
+    logSecrets(`chat botresponse description: ${botResponse.Description}`);
 
     res.json({ message: botResponse });
   } catch (error) {
-    console.error("Error generating chat response:", error);
+    logErrors("Error generating chat response:", error);
     res.status(500).json({ message: "Error generating chat response" });
   }
 };
@@ -183,10 +187,10 @@ export const testOpenAI = async (req, res) => {
     });
 
     const botResponse = response.choices[0].message.content;
-    console.log("OpenAI API Test Response:", botResponse);
+    logSecrets("OpenAI API Test Response:", botResponse);
     res.json({ message: "OpenAI API is working", response: botResponse });
   } catch (error) {
-    console.error("Error testing OpenAI API:", error);
+    logErrors("Error testing OpenAI API:", error);
     res.status(500).json({ message: "Error testing OpenAI API", error: error.message });
   }
 };
@@ -196,15 +200,16 @@ export const startConversation = async (req, res) => {
   const { messages, userResponse } = req.body;
   const EXIT_KEYWORD = "ww";
 
-  console.log("Initial messages:", JSON.stringify(messages, null, 2));
+  logSecrets("OpenAI API Test Response:", JSON.stringify(messages, null, 2));
+  ("Initial messages:", JSON.stringify(messages, null, 2));
 
   if (!messages || !Array.isArray(messages)) {
-    console.log("Invalid messages format");
+    logVars("Invalid messages format");
     return res.status(400).json({ message: "Invalid messages format" });
   }
 
   if (!userResponse) {
-    console.log("User response is required");
+    logVars("User response is required");
     return res.status(400).json({ message: "User response is required" });
   }
 
@@ -214,17 +219,17 @@ export const startConversation = async (req, res) => {
 
     const initialQuestion = "1. What kind of personality are you?";
     addMessage('assistant', initialQuestion, messages);
-    console.log("Initial question sent:", initialQuestion);
+    logSecrets("Initial question sent:", initialQuestion);
     return res.json({ nextQuestion: initialQuestion, messages });
   }
 
   addMessage('user', userResponse, messages);
-  console.log("Updated messages:", JSON.stringify(messages, null, 2));
+  logSecrets("Updated messages:", JSON.stringify(messages, null, 2));
 
   if (userResponse.toLowerCase().includes(EXIT_KEYWORD)) {
-    console.log("Conversation has been terminated.");
+    logVars("Conversation has been terminated.");
     const lastAssistantMessage = messages[messages.length - 1].content;
-    console.log(`Last Assistant Message: ${lastAssistantMessage}`);
+    logSecrets(`Last Assistant Message: ${lastAssistantMessage}`);
 
     try {
       const response = await openai.beta.chat.completions.parse({
@@ -244,12 +249,12 @@ export const startConversation = async (req, res) => {
         throw new Error("Invalid response format");
       }
 
-      console.log(`Parsed Format: ${JSON.stringify(botResponse)}`);
-      console.log(`Chat response description: ${botResponse.Description}`);
+      logSecrets(`Parsed Format`, JSON.stringify(botResponse));
+      logSecrets(`Chat response description: ${botResponse.Description}`);
 
       return res.json({ description: botResponse.Description, lastAssistantMessage });
     } catch (error) {
-      console.error("Error generating spell response:", error.message);
+      logErrors("Error generating spell response:", error.message);
       return res.status(500).json({ message: "Error generating spell response" });
     }
   }
@@ -262,10 +267,10 @@ export const startConversation = async (req, res) => {
 
     const nextQuestion = response.choices[0].message.content;
     addMessage('assistant', nextQuestion, messages);
-    console.log("Next question:", nextQuestion);
+    logSecrets("Next question:", nextQuestion);
     return res.json({ nextQuestion, messages });
   } catch (error) {
-    console.error("Error during API call:", error.message);
+    logErrors("Error during API call:", error.message);
     return res.status(500).json({ message: "Error during API call" });
   }
 };

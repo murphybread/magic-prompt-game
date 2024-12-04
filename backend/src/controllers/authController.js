@@ -1,9 +1,12 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
+import { logVars, logSecrets, logErrors } from "../utils/logging.js";
+
 
 export const register = async (req, res) => {
-  console.log("Registration attempt:", req.body);
+  logSecrets("Registration attempt:", req.body)
+  
   const { username, email, password } = req.body;
 
   try {
@@ -32,10 +35,10 @@ export const register = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    console.log("User registered successfully:", username);
+    logSecrets("User registered successfully:", username);
     res.status(201).json({ token });
   } catch (error) {
-    console.error("Error during registration:", error);
+    logErrors("Error during registration:", error);
     res.status(500).json({ message: "Error registering user" });
   }
 };
@@ -63,7 +66,7 @@ export const login = async (req, res) => {
     });
     res.json({ token });
   } catch (error) {
-    console.error("Error during login:", error);
+   logErrors ("Error during login:", error);
     res.status(500).json({ message: "Error logging in" });
   }
 };
@@ -91,7 +94,7 @@ export const guestLogin = async (req, res) => {
 
     res.json({ token, username: guestUser.username });
   } catch (error) {
-    console.error("Error creating guest user:", error);
+    logErrors("Error creating guest user:", error);
     res.status(500).json({ message: "Error creating guest user" });
   }
 };
@@ -110,7 +113,7 @@ export const getUserProfile = async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error("Error fetching user profile:", error);
+    logErrors("Error fetching user profile:", error);
     res.status(500).json({ message: "Error fetching user profile" });
   }
 };
@@ -131,7 +134,7 @@ export const updateUserProfile = async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error("Error updating user profile:", error);
+    logErrors("Error updating user profile:", error);
     res.status(500).json({ message: "Error updating user profile" });
   }
 };
@@ -141,42 +144,42 @@ export const getUserList = async (req, res) => {
     const result = await req.db.query("SELECT id, username FROM users");
     res.json(result.rows);
   } catch (error) {
-    console.error("Error fetching user list:", error);
+    logErrors("Error fetching user list:", error);
     res.status(500).json({ message: "Error fetching user list" });
   }
 };
 
 export const deleteUser = async (req, res) => {
   try {
-    console.log("Delete user request received:", req.body);
-    console.log("User from token:", req.user);
+    logSecrets("Delete user request received:", req.body);
+    logSecrets("User from token:", req.user);
 
     const { username } = req.body;
     const userId = req.user.id;
 
     if (req.user.username !== username) {
-      console.log("Username mismatch:", req.user.username, username);
+      logSecrets("Username mismatch:", req.user.username, username);
       return res
         .status(403)
         .json({ message: "You can only delete your own account" });
     }
 
-    console.log("Attempting to delete user with ID:", userId);
+    logSecrets("Attempting to delete user with ID:", userId);
     const result = await req.db.query("DELETE FROM users WHERE id = $1", [
       userId,
     ]);
 
-    console.log("Delete query result:", result);
+    logSecrets("Delete query result:", result);
 
     if (result.rowCount === 0) {
-      console.log("No user found with ID:", userId);
+      logSecrets("No user found with ID:", userId);
       return res.status(404).json({ message: "User not found" });
     }
 
-    console.log("User deleted successfully:", username);
+    logSecrets("User deleted successfully:", username);
     res.json({ message: "User deleted successfully" });
   } catch (error) {
-    console.error("Error deleting user:", error);
+    logErrors("Error deleting user:", error);
     res.status(500).json({ message: "Error deleting user", error: error.message });
   }
 };
@@ -196,7 +199,7 @@ export const socialLoginCallback = async (req, res) => {
 
     res.redirect(`${process.env.FRONTEND_URL}/login?token=${token}&username=${encodeURIComponent(user.username)}`);
   } catch (error) {
-    console.error("Error in social login callback:", error);
+    logErrors("Error in social login callback:", error);
     res.redirect(`${process.env.FRONTEND_URL}/login?error=Authentication failed`);
   }
 };

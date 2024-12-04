@@ -37,7 +37,10 @@ backend
 - [x] routes/gameRoutes
 - [x] src/controllers/authControllers
 - [x] src/controllers/chatControllers
-- [x]] src/controllers/gameControllers
+- [x] src/controllers/gameControllers
+
+Logging 리팩토링
+backend
 
 ## Setup
 

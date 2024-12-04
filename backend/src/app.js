@@ -12,6 +12,8 @@ import pg from "pg";
 const { Pool } = pg;
 dotenv.config(); // 환경 변수 로드
 
+import { logVars, logSecrets, logErrors } from "./utils/logging.js";
+
 // __dirname 설정 (ESM에서는 직접 사용 불가)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,24 +22,23 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-console.log("Environment variables check:");
+logVars("Environment variables check:");
 
-console.log("OpenAI API Key is set:", !!process.env.OPENAI_API_KEY);
-console.log("JWT_SECRET is set:", !!process.env.JWT_SECRET);
-console.log("GOOGLE_CLIENT_ID is set:", !!process.env.GOOGLE_CLIENT_ID);
-console.log("GOOGLE_CLIENT_SECRET is set:", !!process.env.GOOGLE_CLIENT_SECRET);
-console.log("TWITTER_CONSUMER_KEY is set:", !!process.env.TWITTER_CONSUMER_KEY);
-console.log(
+logSecrets("OpenAI API Key is set:", process.env.OPENAI_API_KEY);
+logSecrets("JWT_SECRET is set:", process.env.JWT_SECRET);
+logSecrets("GOOGLE_CLIENT_ID is set:", process.env.GOOGLE_CLIENT_ID);
+logSecrets("GOOGLE_CLIENT_SECRET is set:", process.env.GOOGLE_CLIENT_SECRET);
+logSecrets("TWITTER_CONSUMER_KEY is set:", process.env.TWITTER_CONSUMER_KEY);
+logSecrets(
   "TWITTER_CONSUMER_SECRET is set:",
   !!process.env.TWITTER_CONSUMER_SECRET
 );
-console.log("SESSION_SECRET is set:", !!process.env.SESSION_SECRET);
-console.log("FRONTEND_URL is set:", !!process.env.FRONTEND_URL);
-console.log("BACKEND_URL is set:", !!process.env.BACKEND_URL);
+logSecrets("SESSION_SECRET is set:", process.env.SESSION_SECRET);
+logSecrets("FRONTEND_URL is set:", process.env.FRONTEND_URL);
+logSecrets("BACKEND_URL is set:", process.env.BACKEND_URL);
 
-console.log(
-  "Twitter callback URL:",
-  `${process.env.BACKEND_URL}/api/auth/twitter/callback`
+logSecrets(
+  "Twitter callback URL:", process.env.BACKEND_URL
 );
 
 const pool = new Pool({
@@ -93,13 +94,13 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/game", gameRoutes);
 
-const PORT = process.env.PORT || 8008; // Changed port to 8008
 
-console.log("Attempting to start server on port:", PORT);
+
+logSecrets("Attempting to start server on port:", process.env.PORT);
 
 const server = app
-  .listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on port ${PORT}`);
+  .listen(process.env.PORT, "0.0.0.0", () => {
+    logVars(`Server running on port` , process.env.PORT);
   })
   .on("error", (err) => {
     console.error("Error starting server:", err);
