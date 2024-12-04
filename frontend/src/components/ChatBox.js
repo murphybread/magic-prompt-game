@@ -1,6 +1,8 @@
   import React, { useState } from 'react';
   import { axiosInstance } from '../services/authService';
   import './ChatBox.css';
+
+  import { logVars, logSecrets, logErrors } from "../utils/logging.js";
   
   const ChatBox = () => {
     const [messages, setMessages] = useState([]);
@@ -41,7 +43,6 @@
         if (description) {
 
           const imageResponse = await axiosInstance.post('/game/chat-image', { description});
-          console.log("Image Response:", imageResponse.data); 
           if (imageResponse.data.gcsUrl) {
             setImageUrls(prevUrls => [...prevUrls, imageResponse.data.gcsUrl]);
           } else {
@@ -60,7 +61,7 @@
 
   
       } catch (error) {
-        console.error('Error sending message:', error);
+        logErrors('Error sending message:', error);
         setMessages(prevMessages => [
           ...prevMessages,
           { role: 'assistant', content: 'Error: Unable to get response from the server.' },

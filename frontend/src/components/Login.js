@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { login, register, guestLogin } from '../services/authService';
-import APITester from './APITester';
 import './Login.css';
+import { logVars, logSecrets, logErrors } from "../utils/logging.js";
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
@@ -25,16 +25,16 @@ const Login = ({ onLogin }) => {
     try {
       let token;
       if (isRegistering) {
-        console.log('Attempting to register user:', username);
+        
         token = await register(username, password);
       } else {
-        console.log('Attempting to log in user:', username);
+        
         token = await login(username, password);
       }
-      console.log('Authentication successful, token received');
+      logVars('Authentication successful, token received');
       onLogin(token, username);
     } catch (error) {
-      console.error('Authentication error:', error.message);
+      logErrors('Authentication error:', error.message);
       alert(error.response ? error.response.data.message : error.message);
     }
   };
@@ -80,7 +80,7 @@ const Login = ({ onLogin }) => {
       <button onClick={() => handleSocialLogin('twitter')} className="social-button twitter-button">
         Sign in with Twitter
       </button>
-      <APITester />
+      
     </div>
   );
 };

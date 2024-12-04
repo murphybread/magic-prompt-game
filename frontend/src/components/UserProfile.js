@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { updateUserProfile } from '../services/authService';
 import './UserProfile.css';
+import { logVars, logSecrets, logErrors } from "../utils/logging.js";
 
 const UserProfile = ({ profile, onProfileUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -13,7 +14,7 @@ const UserProfile = ({ profile, onProfileUpdate }) => {
       onProfileUpdate(updatedProfile);
       setIsEditing(false);
     } catch (error) {
-      console.error('Error updating profile:', error);
+      logErrors('Error updating profile:', error);
       alert('Failed to update profile. Please try again.');
     }
   };
