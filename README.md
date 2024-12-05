@@ -1,20 +1,29 @@
 # Magic Game Web Application
 
+### 프로젝트 소개
+사용자별, 시도 횟수별 고유한 마법을 생성형 AI를 통해 만들고 이를 카드화 하여 개인의 창작 즐거울을 제공하는 프로젝트입니다.
 
-프로젝트소개: 사용자별로 여러번 질문을 받아 요청마다 고유한 마법을 생성AI를 통해 만듭니다.
-
-목표
-- [x] 사용자로부터 여러번 정해진 질문을 받기
-- [ ] 사용자의 정보 DB에 접근해서 추가 확인
-- [x] 출력된 형식을 이용하여 마법 정보 텍스트로 만들기
-- [x] 출력된 형식의 묘사를 이용하여 생성 AI로 그림만들기
-- [ ] 생성된 마법을 정보에 맞춰서 카드화 하기
-- [ ] 생성된 마법 정보를 DB에 업로드(마법 정보 텍스트 및 이미지 URL)
-- [ ] 유저별 소지중인 마법 카드를 확인하는 인벤토리 시스템
+### 주요 기능
+- 회원가입 및 로그인
+- 소셜 로그인
+- 생성형 AI 기반 텍스및 이미지 생성
 
 
+### 현재 버전 구현 데모(1.3.2기준)
+[chrome-capture-2024-12-5.webm](https://github.com/user-attachments/assets/2fc6d1bc-4cbd-47d2-ac09-b3cf9ca7c36f)
 
-This is a simple magic game web application using Express.js and React, with basic authentication, social login, and mana cost calculation.
+### 기술 스택
+- Backend: Node.js, PostgeSQL
+- Frontend: React
+- Authentication: JSON Web Tokens (JWT), Passport.js
+- Social Login: Twitter OAuth 1.0a
+- Storage: GCP Storage
+- AI Features:
+   - Chat Generation: OpenAI Chat
+   - Image Generation: OpenAI DALL·E
+
+
+### 버전 기록
 
 1.0.0: 백엔드(Express)와 프론트엔드(React)간의 연동. 백엔드의 API 기능을 프론트엔드의 버튼을 클릭하였을 때 동작 가능 여부 확인 (Key Word CORS )
 
@@ -37,11 +46,13 @@ This is a simple magic game web application using Express.js and React, with bas
 
 1.3.1: structured output 기능을 통해 정해진 양식 출력
 
-1.3.2: multiturnconversation 방식 구현. 최종적으로 특정 키워드 입력시  structured output기능 사용. 이후 기존 generated Image동작
+1.3.2: multiturnconversation 방식 구현. 최종적으로 특정 키워드 입력시  structured output기능 사용. 이후 기존 generated Image동작, 리팩토링 CommonJS->ESM
 
-#### nextStep
+### 추가 예정 기능
 - `Socket.io` 를 활용한 양방향 통신
-- Multiturn방식의 대화 구현 (로컬에서 확인 완료)
+- 생성된 마법의 카드화 UI 적용
+- 카드 정보 텍스트 및 이미지 DB로 등록(카드 텍스트결과 및 이미지는 URL)
+- 카드 인벤토리 구현
 
 CommonJS -> ESM 마이그레이션 dhksfy
 backend
@@ -53,95 +64,4 @@ backend
 - [x] src/controllers/chatControllers
 - [x] src/controllers/gameControllers
 
-Logging 리팩토링
-backend
 
-## Setup
-
-### Backend
-
-1. Navigate to the `backend` directory:
-   ```
-   cd backend
-   ```
-
-2. Install dependencies:
-   ```
-   npm install
-   ```
-
-3. Set up environment variables:
-   Create a `.env` file in the `backend` directory with the following content:
-   ```
-   JWT_SECRET=your_jwt_secret
-   GOOGLE_CLIENT_ID=your_google_client_id
-   GOOGLE_CLIENT_SECRET=your_google_client_secret
-   TWITTER_CONSUMER_KEY=your_twitter_consumer_key
-   TWITTER_CONSUMER_SECRET=your_twitter_consumer_secret
-   SESSION_SECRET=your_session_secret
-   ```
-
-4. Start the backend server:
-   ```
-   npm start
-   ```
-
-### Frontend
-
-1. Navigate to the `frontend` directory:
-   ```
-   cd frontend
-   ```
-
-2. Install dependencies:
-   ```
-   npm install
-   ```
-
-3. Set up environment variables:
-   Create a `.env` file in the `frontend` directory with the following content:
-   ```
-   REACT_APP_API_URL=http://localhost:8008/api
-   ```
-
-4. Start the frontend development server:
-   ```
-   npm start
-   ```
-
-## Social Login Setup
-
-### Google OAuth
-
-1. Go to the [Google Developers Console](https://console.developers.google.com/).
-2. Create a new project or select an existing one.
-3. Enable the Google+ API.
-4. Go to the Credentials page and create new OAuth 2.0 Client ID credentials.
-5. Set the authorized JavaScript origins to `http://localhost:3000` (for development).
-6. Set the authorized redirect URI to `http://localhost:8008/api/auth/google/callback`.
-7. Copy the Client ID and Client Secret to your backend `.env` file.
-
-### Twitter OAuth
-
-1. Go to the [Twitter Developer Portal](https://developer.twitter.com/en/portal/dashboard).
-2. Create a new app or select an existing one.
-3. Go to the "Keys and tokens" tab.
-4. Generate API Key and API Secret Key (Consumer Keys).
-5. Set the callback URL to `http://localhost:8008/api/auth/twitter/callback`.
-6. Copy the API Key and API Secret Key to your backend `.env` file.
-
-## Features
-
-- User registration and login
-- Social login with Google and Twitter
-- Guest login
-- Mana cost calculation
-- Spell casting
-- User mana management
-
-## Technologies Used
-
-- Backend: Node.js, Express.js, PostgreSQL
-- Frontend: React.js
-- Authentication: JSON Web Tokens (JWT), Passport.js
-- Social Login: Google OAuth 2.0, Twitter OAuth 1.0a
