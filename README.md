@@ -9,7 +9,7 @@
 - 생성형 AI 기반 텍스및 이미지 생성
 
 
-### 현재 버전 구현 데모(1.3.2기준)
+### 현재 버전 구현 데모(1.4.1기준)
 [chrome-capture-2024-12-5.webm](https://github.com/user-attachments/assets/2fc6d1bc-4cbd-47d2-ac09-b3cf9ca7c36f)
 
 ### 기술 스택
