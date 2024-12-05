@@ -163,45 +163,23 @@ export const generateChatResponse = async (req, res) => {
       response_format: zodResponseFormat(MagicSpell, "magicspell"),
     });
 
-    const botResponse = response.choices[0].message.parsed;
-    logSecrets(`botResponse : ${botResponse}`);
-    logSecrets(`chat botresponse description: ${botResponse.Description}`);
+    const zodResponse = response.choices[0].message.parsed;
+    logSecrets(`zodResponse : ${zodResponse}`);
+    logSecrets(`chat zodresponse description: ${zodResponse.Description}`);
 
-    res.json({ message: botResponse });
+    res.json({ message: zodResponse });
   } catch (error) {
     logErrors("Error generating chat response:", error);
     res.status(500).json({ message: "Error generating chat response" });
   }
 };
 
-export const testOpenAI = async (req, res) => {
-  try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-2024-08-06",
-      messages: [
-        {
-          role: "system",
-          content: SYSTEM_ROLE,
-        },
-      ],
-    });
-
-    const botResponse = response.choices[0].message.content;
-    logSecrets("OpenAI API Test Response:", botResponse);
-    res.json({ message: "OpenAI API is working", response: botResponse });
-  } catch (error) {
-    logErrors("Error testing OpenAI API:", error);
-    res.status(500).json({ message: "Error testing OpenAI API", error: error.message });
-  }
-};
-
-
 export const startConversation = async (req, res) => {
   const { messages, userResponse } = req.body;
   const EXIT_KEYWORD = "ww";
 
-  logSecrets("OpenAI API Test Response:", JSON.stringify(messages, null, 2));
-  ("Initial messages:", JSON.stringify(messages, null, 2));
+  
+  logSecrets("Initial messages", JSON.stringify(messages, null, 2));
 
   if (!messages || !Array.isArray(messages)) {
     logVars("Invalid messages format");
@@ -213,23 +191,19 @@ export const startConversation = async (req, res) => {
     return res.status(400).json({ message: "User response is required" });
   }
 
-  if (messages.length === 0) {
+  if (!messages.find(msg => msg.role === 'system')) {
     const systemRole = SYSTEM_ROLE;
-    addMessage('system', systemRole, messages);
-
-    const initialQuestion = "1. What kind of personality are you?";
-    addMessage('assistant', initialQuestion, messages);
-    logSecrets("Initial question sent:", initialQuestion);
-    return res.json({ nextQuestion: initialQuestion, messages });
+    messages.unshift({ role: 'system', content: systemRole });
+    logSecrets("Added SYSTEM_ROLE to messages:", JSON.stringify(messages, null, 2));
   }
 
   addMessage('user', userResponse, messages);
-  logSecrets("Updated messages:", JSON.stringify(messages, null, 2));
+  logSecrets("Updated user messages:", JSON.stringify(messages, null, 2));
 
   if (userResponse.toLowerCase().includes(EXIT_KEYWORD)) {
     logVars("Conversation has been terminated.");
-    const lastAssistantMessage = messages[messages.length - 1].content;
-    logSecrets(`Last Assistant Message: ${lastAssistantMessage}`);
+    const orderUserMessage = messages[messages.length - 1].content;
+    logSecrets(`Order User Message: `, orderUserMessage);
 
     try {
       const response = await openai.beta.chat.completions.parse({
@@ -239,40 +213,47 @@ export const startConversation = async (req, res) => {
             role: "system",
             content: "In a magical world, users provide a simple string and a mana value as input. **If no mana is mentioned, the default input cost is 10.** Based on this string, a magic spell is created with the following attributes:\n\n- **Description**: Depicts the spell's appearance based on the input prompt, including aspects like size, shape, color, patterns, and similarities to objects or scenarios.\n- **Attack Power**: A numerical value representing the spell's offensive strength.\n- **Cost**: A numerical value indicating the mana required to cast the spell.\n- **Effect**: A narrative description of what the spell does.\n- **Type**: Assigns an appropriate attribute to the spell. Common elements like fire, water, grass, and earth are acceptable, but depending on the description, it can also include diverse attributes like mirror, blood, darkness, time, fluid, etc.\n- **Name**: A concise summary of the spell.\n\nAll spells vary in power based on the mana input, even under the same conditions. For example, with the same prompt, a spell created with mana 1 and mana 10 will differ significantly in attack power, cost, description, name, and effect.\n\n**Example:**\n\nInput prompt: *\"fire ball with soccer ball\"*\n\nMana: **1**\n\n- **Name**: Fire Soccer Ball\n- **Attack Power**: 10\n- **Cost**: 2\n- **Description**: A small fireball about the size of a soccer ball that looks incomplete. It has great offense but can also explode when cast.\n- **Effect**: The caster has a chance to take damage themselves.\n- **Type**: Fire",
           },
-          { role: "user", content: lastAssistantMessage },
+          ...messages.slice(1)
         ],
         response_format: zodResponseFormat(MagicSpell, "free"),
       });
 
-      const botResponse = response.choices[0].message.parsed;
-      if (!botResponse || !botResponse.Description) {
-        throw new Error("Invalid response format");
+      const zodResponse = response.choices[0].message.parsed;
+      if (!zodResponse || !zodResponse.Description) {
+        throw new Error("Invalid  zod response format");
       }
 
-      logSecrets(`Parsed Format`, JSON.stringify(botResponse));
-      logSecrets(`Chat response description: ${botResponse.Description}`);
+      logSecrets(`Parsed Format`, JSON.stringify(zodResponse));
+      logSecrets(`Chat response description`, zodResponse.Description);
 
-      return res.json({ description: botResponse.Description, lastAssistantMessage });
+      const stringifiedZodResponse = Object.entries(zodResponse).map(([key, value]) => `${key}: ${value}`).join('\n');
+
+      addMessage('assistant', stringifiedZodResponse , messages);
+
+      logSecrets("Final stringifiedZodResponse\n", stringifiedZodResponse);
+
+
+      return res.json({ description: zodResponse.Description, assistantResponse: stringifiedZodResponse });
     } catch (error) {
-      logErrors("Error generating spell response:", error.message);
+      logErrors("Error generating spell response:", error);
       return res.status(500).json({ message: "Error generating spell response" });
     }
   }
 
-  try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-2024-11-20',
-      messages: messages,
-    });
+try {
+  const response = await openai.chat.completions.create({
+    model: 'gpt-4o-2024-11-20',
+    messages: messages,
+  });
 
-    const nextQuestion = response.choices[0].message.content;
-    addMessage('assistant', nextQuestion, messages);
-    logSecrets("Next question:", nextQuestion);
-    return res.json({ nextQuestion, messages });
-  } catch (error) {
-    logErrors("Error during API call:", error.message);
-    return res.status(500).json({ message: "Error during API call" });
-  }
+  const assistantResponse = response.choices[0].message.content;
+  addMessage('assistant', assistantResponse, messages);
+  logSecrets("Assistant Response:", assistantResponse);
+  return res.json({ assistantResponse });
+} catch (error) {
+  logErrors("Error during API call:", error.message);
+  return res.status(500).json({ message: "Error during API call" });
+}
 };
 
 function addMessage(role, content, messages) {

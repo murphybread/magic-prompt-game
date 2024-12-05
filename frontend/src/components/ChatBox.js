@@ -8,7 +8,7 @@ import { faUser, faHatWizard } from '@fortawesome/free-solid-svg-icons';
 import { logErrors } from "../utils/logging.js";
 
 const ChatBox = () => {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([{ role: 'assistant', content: "1. What kind of personality are you?" }]);
   const [input, setInput] = useState('');
   const [imageUrls, setImageUrls] = useState([]);
   const [loading, setLoading] = useState(false); // Loading state
@@ -18,10 +18,11 @@ const ChatBox = () => {
     if (input.trim() === '') return;
 
     
-    setMessages(prevMessages => [
-      ...prevMessages,
-      { role: 'user', content: input }
-    ]);
+    const newMessages = [
+      ...messages,
+      { role: "user", content: input },
+    ];
+    setMessages(newMessages);
     setInput('');
     setLoading(true); // Start spinner
 
@@ -34,17 +35,16 @@ const ChatBox = () => {
         userResponse: input,
       });
 
-      const { nextQuestion, description, lastAssistantMessage } = response.data;
+      const { assistantResponse ,description } = response.data;
 
-      if (nextQuestion) {
+      if (assistantResponse) {
         setMessages(prevMessages => [
           ...prevMessages,
-          { role: 'assistant', content: nextQuestion },
+          { role: 'assistant', content: assistantResponse },
         ]);
       }
 
       if (description) {
-
         const imageResponse = await axiosInstance.post('/game/chat-image', { description});
         if (imageResponse.data.gcsUrl) {
           setImageUrls(prevUrls => [...prevUrls, imageResponse.data.gcsUrl]);
@@ -54,12 +54,7 @@ const ChatBox = () => {
 
       }
 
-      if (lastAssistantMessage) {
-        setMessages(prevMessages => [
-          ...prevMessages,
-          { role: 'assistant', content: `Last Assistant Message: ${lastAssistantMessage}` },
-        ]);
-      }
+
 
 
 
@@ -74,6 +69,7 @@ const ChatBox = () => {
 
     }
   };
+
 
   return (
     <div className="chat-box">
@@ -97,7 +93,9 @@ const ChatBox = () => {
               <FontAwesomeIcon icon={faHatWizard} />
             )}
           </div>
-          <pre className={`message ${message.role}`}>{message.content}</pre>
+          <pre className={`message ${message.role}`}>
+           {message.content}
+          </pre>
         </div>
       ))}
     </div>

@@ -13,7 +13,6 @@ router.get('/user-mana', gameController.getUserMana);
 router.post('/regenerate-mana', gameController.regenerateMana);
 router.post('/chat', chatController.generateChatResponse);
 router.post('/chat-image', chatController.generateImage);
-router.get('/test-openai', chatController.testOpenAI);
 router.post('/start-conversation', chatController.startConversation);
 
 export default router;

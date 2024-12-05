@@ -4,7 +4,7 @@ exports.generateToken = (user) => {
   return jwt.sign(
     { id: user.id, username: user.username },
     process.env.REPLIT_JWT_SECRET,
-    { expiresIn: '1h' }
+    { expiresIn: '24h' }
   );
 };
 
