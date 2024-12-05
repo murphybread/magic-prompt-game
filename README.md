@@ -48,6 +48,8 @@
 
 1.3.2: multiturnconversation 방식 구현. 최종적으로 특정 키워드 입력시  structured output기능 사용. 이후 기존 generated Image동작, 리팩토링 CommonJS->ESM
 
+1.4.1: 대화시 표기화면 UI변경 및 multiconversation 반영시 기존의 대화를 기반으로 동작
+
 ### 추가 예정 기능
 - `Socket.io` 를 활용한 양방향 통신
 - 생성된 마법의 카드화 UI 적용
