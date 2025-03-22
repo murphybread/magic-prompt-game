@@ -18,15 +18,32 @@
 ### 현재 버전 구현 데모(1.4.1기준)
 [chrome-capture-2024-12-5.webm](https://github.com/user-attachments/assets/2fc6d1bc-4cbd-47d2-ac09-b3cf9ca7c36f)
 
-### 기술 스택
-- Backend: Node.js, PostgeSQL
-- Frontend: React
-- Authentication: JSON Web Tokens (JWT), Passport.js
-- Social Login: Twitter OAuth 1.0a
-- Storage: GCP Storage
-- AI Features:
-   - Chat Generation: OpenAI Chat
-   - Image Generation: OpenAI DALL·E 3
+### 기술 스택 및 지식
+
+## 주요 프레임워크 및 라이브러리
+### 백엔드(BE)
+- **Node.js**: 비동기 I/O를 효율적으로 처리하여 OpenAI API 호출 시 응답 대기 시간을 관리하면서도 서버의 성능을 유지
+- **Express.js**: 미들웨어 기반 구조를 활용해 인증, 라우팅, 에러 처리를 모듈화하여 코드 유지보수성을 높임
+- **PostgreSQL**: 유저 정보와 생성된 마법 카드의 지속적인 저장을 위해 사용, 관계형 데이터베이스로 유저-카드 간 관계 모델링에 적합
+- **Passport.js**: 다양한 인증 전략을 손쉽게 통합할 수 있어, 트위터 소셜 로그인과 로컬 인증을 일관된 방식으로 처리
+- **JWT**: 서버의 상태 유지 없이도 클라이언트의 인증 상태를 관리해 확장성을 높이고, 토큰 만료 시간을 24시간으로 설정해 사용자 경험 개선
+
+### 프론트엔드(FE)
+- **React**: 컴포넌트 기반 구조로 UI 요소를 모듈화하여 채팅 인터페이스, 로그인 폼, 마법 카드 표시 등 각 각 기능을 상태 관리를 통해 효율적으로 구현
+- **Axios**: Promise 기반 HTTP 클라이언트로 백엔드 API 호출을 간소화하고, 인터셉터를 통해 JWT 토큰을 모든 요청에 자동 첨부
+- **비동기 상태 관리**: 요청 중 로딩 스피너를 표시하고 버튼 비활성화를 통해 사용자에게 진행 상황을 명확히 전달
+- **이미지 갤러리 통합**: 생성된 마법 이미지들을 대화 컨텍스트와 함께 표시하여 사용자의 창작물을 즉시 확인 가능
+
+
+### 외부 API 통합
+- **OpenAI API**: 프로젝트의 핵심 기능인 대화형 마법 생성 구현에 활용, GPT-4o와 DALL-E 3 모델을 사용해 텍스트와 이미지 생성
+- **Zod**: OpenAI의 structured output 기능과 함께 사용해 일관된 형식의 마법 속성(이름, 타입, 데미지 등)을 보장, 프론트엔드에서 데이터 처리를 단순화
+
+### 클라우드 서비스
+- **Google Cloud Storage**: DALL-E로 생성된 이미지를 영구 저장하고 공개 URL로 제공해 프론트엔드에서 쉽게 액세스할 수 있게 구현
+
+
+
 
 
 ### 버전 기록
