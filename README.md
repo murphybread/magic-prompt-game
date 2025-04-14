@@ -44,8 +44,8 @@
 
 
 ## 트러블 슈팅 사례
-CORS, 소셜 로그인 등 https://www.murphybooks.me/projects/library/kr/100/110/110-40/kr-110-40-a/
-DB 설계, 기능 구현 및 UI UX관련 https://www.murphybooks.me/projects/library/kr/100/110/110-40/kr-110-40-b/
+- CORS, 소셜 로그인 등 https://www.murphybooks.me/projects/library/kr/100/110/110-40/kr-110-40-a/
+- DB 설계, 기능 구현 및 UI UX관련 https://www.murphybooks.me/projects/library/kr/100/110/110-40/kr-110-40-b/
 
 
 
