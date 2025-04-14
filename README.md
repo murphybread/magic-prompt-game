@@ -43,6 +43,9 @@
 - **Google Cloud Storage**: DALL-E로 생성된 이미지를 영구 저장하고 공개 URL로 제공해 프론트엔드에서 쉽게 액세스할 수 있게 구현
 
 
+## 트러블 슈팅 사례
+CORS, 소셜 로그인 등 https://www.murphybooks.me/projects/library/kr/100/110/110-40/kr-110-40-a/
+DB 설계, 기능 구현 및 UI UX관련 https://www.murphybooks.me/projects/library/kr/100/110/110-40/kr-110-40-b/
 
 
 
